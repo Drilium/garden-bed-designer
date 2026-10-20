@@ -1,0 +1,1396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Garden Bed Designer</title>
+<meta name="description" content="Plan a garden one square foot at a time, with round beds, keyhole beds and herb spirals, spacing, companions, soil, cost, and planting dates for NYC and Westchester.">
+<meta property="og:title" content="Garden Bed Designer">
+<meta property="og:description" content="Paint beds on a square-foot grid, add round beds and herb spirals, and get spacing, companions, soil, cost, and planting dates.">
+<meta name="theme-color" content="#2F6B3F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232F6B3F'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23F0A53A' stroke-width='2.5'/%3E%3Cpath d='M16 7v18M7 16h18' stroke='%23F0A53A' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDF0E8;--sheet:#F9FBF7;--sheet2:#F2F5EE;--ink:#17251C;--ink2:#4A5A4F;--rule:#C9D2C3;--grid:#CFD7C9;--grid2:#E2E8DD;
+  --leaf:#2F6B3F;--leaf-h:#24563A;--leaf-ink:#fff;--leaf-soft:#DDEBDD;--mari:#F0A53A;--mari-soft:#FCEBCB;
+  --loam:#C9AE88;--loam-dot:#7F6243;--gravel:#C3CACD;--gravel-dot:#7D878C;--stone:#A39A8B;--stone-d:#7E7566;--compost:#7A5A3A;
+  --warn:#8A5200;--warn-bg:#FFF2D9;--safe:#CDEBD2;--cau:#FBE7A8;--tox:#F7CCD1;--ver:#E3E5E1;
+  --ps:46%;--pl:80%;--pl2:90%;--dl:24%;
+  --r-lg:18px;--r-md:12px;--r-sm:8px;
+  --lift:0 1px 0 rgba(23,37,28,.05),0 12px 32px -18px rgba(23,37,28,.35);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#111915;--sheet:#18221C;--sheet2:#1D2922;--ink:#E5ECE4;--ink2:#A6B4A9;--rule:#2E3B33;--grid:#2A362E;--grid2:#1F2A23;
+  --leaf:#7CC08C;--leaf-h:#94D0A2;--leaf-ink:#0D1A10;--leaf-soft:#22382A;--mari:#F2B256;--mari-soft:#3A2E17;
+  --loam:#6E5838;--loam-dot:#C9AE85;--gravel:#4B5458;--gravel-dot:#9AA3A7;--stone:#6F685E;--stone-d:#948B7D;--compost:#4F3A26;
+  --warn:#F2C374;--warn-bg:#33270F;--safe:#285A33;--cau:#6A5717;--tox:#6E2A31;--ver:#3E433F;
+  --ps:34%;--pl:34%;--pl2:26%;--dl:86%;--lift:0 1px 0 rgba(0,0,0,.3),0 16px 32px -18px rgba(0,0,0,.7);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#111915;--sheet:#18221C;--sheet2:#1D2922;--ink:#E5ECE4;--ink2:#A6B4A9;--rule:#2E3B33;--grid:#2A362E;--grid2:#1F2A23;
+  --leaf:#7CC08C;--leaf-h:#94D0A2;--leaf-ink:#0D1A10;--leaf-soft:#22382A;--mari:#F2B256;--mari-soft:#3A2E17;
+  --loam:#6E5838;--loam-dot:#C9AE85;--gravel:#4B5458;--gravel-dot:#9AA3A7;--stone:#6F685E;--stone-d:#948B7D;--compost:#4F3A26;
+  --warn:#F2C374;--warn-bg:#33270F;--safe:#285A33;--cau:#6A5717;--tox:#6E2A31;--ver:#3E433F;
+  --ps:34%;--pl:34%;--pl2:26%;--dl:86%;--lift:0 1px 0 rgba(0,0,0,.3),0 16px 32px -18px rgba(0,0,0,.7);color-scheme:dark}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 "Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+h1,h2,h3,h4{line-height:1.2;margin:0}
+p{margin:0 0 .6em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--mari);outline-offset:2px;border-radius:4px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:var(--r-sm);z-index:50;text-decoration:none;font-weight:600}
+.skip:focus{top:12px}
+.sm{font-size:.84rem;color:var(--ink2)}
+.mut{color:var(--ink2)}
+.wrap{max-width:1360px;margin:0 auto;padding:0 20px}
+a{color:var(--leaf)}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0 14px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.mark{flex:none;width:44px;height:44px}
+.brand h1{font-size:1.45rem;font-weight:800;letter-spacing:-.02em}
+.brand p{margin:2px 0 0;color:var(--ink2);font-size:.92rem;max-width:62ch}
+.views{display:flex;background:var(--sheet);border:1px solid var(--rule);border-radius:999px;padding:4px}
+.views button{border:0;background:none;padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;color:var(--ink2);min-height:40px;white-space:nowrap}
+.views button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+/* ---------- buttons & fields ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 16px;border-radius:var(--r-sm);border:1px solid var(--leaf);background:var(--leaf);color:var(--leaf-ink);font-weight:600;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--leaf-h);border-color:var(--leaf-h)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.btn.ghost:hover{border-color:var(--ink2);background:var(--sheet2)}
+.btn.small{min-height:34px;padding:5px 12px;font-size:.86rem}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.next{width:100%;margin-top:18px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.icon-btn{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:var(--r-sm);border:1px solid var(--rule);background:var(--sheet);cursor:pointer;flex:none}
+.icon-btn:disabled{opacity:.35;cursor:default}
+.icon-btn svg{width:18px;height:18px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.86rem;font-weight:500;color:var(--ink2)}
+input[type=number],input[type=search],input:not([type]),select,textarea{min-height:40px;padding:7px 10px;border:1px solid var(--rule);border-radius:var(--r-sm);background:var(--sheet);color:var(--ink);font-weight:500;font-size:.95rem;width:100%}
+textarea{min-height:76px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem}
+input[type=range]{accent-color:var(--leaf);width:100%}
+input[type=checkbox]{accent-color:var(--leaf);width:18px;height:18px;flex:none}
+input:disabled,select:disabled{opacity:.5;cursor:not-allowed}
+.check{flex-direction:row;align-items:center;gap:8px;font-weight:500;color:var(--ink)}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fields .full{grid-column:1/-1}
+.hint{font-size:.76rem;font-weight:400;color:var(--ink2)}
+fieldset{border:0;margin:0 0 14px;padding:0}
+legend{font-weight:700;color:var(--ink);font-size:.95rem;margin-bottom:8px;padding:0}
+
+/* ---------- studio layout ---------- */
+.studio{display:grid;grid-template-columns:360px minmax(0,1fr);gap:20px;align-items:start}
+.guide{position:sticky;top:12px;max-height:calc(100dvh - 24px);overflow:auto;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-lg);box-shadow:var(--lift);scrollbar-gutter:stable}
+.steps{list-style:none;margin:0;padding:10px;display:grid;gap:2px;border-bottom:1px solid var(--rule);background:var(--sheet2);border-radius:var(--r-lg) var(--r-lg) 0 0;position:sticky;top:0;z-index:3}
+.step{width:100%;display:grid;grid-template-columns:30px 1fr;gap:2px 12px;align-items:center;text-align:left;border:0;background:none;padding:8px 10px;border-radius:var(--r-md);cursor:pointer}
+.step:hover{background:var(--sheet)}
+.step .num{grid-row:1/3;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--rule);font-weight:700;font-size:.9rem;background:var(--sheet);font-variant-numeric:tabular-nums}
+.step .st{font-weight:700;font-size:.95rem}
+.sf{display:none}
+.step .ss{font-size:.8rem;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.step.done .num{background:var(--leaf);border-color:var(--leaf);color:var(--leaf-ink)}
+.step[aria-current="step"]{background:var(--sheet);box-shadow:inset 0 0 0 1px var(--rule)}
+.step[aria-current="step"] .num{background:var(--mari);border-color:var(--mari);color:#1f1606}
+.panels{padding:18px 18px 20px}
+.panel h2{font-size:1.3rem;font-weight:800;letter-spacing:-.015em;margin-bottom:6px}
+.lede{color:var(--ink2);margin-bottom:16px}
+.sh{font-size:.92rem;font-weight:700;margin:20px 0 8px}
+.tip{margin-top:16px;padding:10px 12px;border-radius:var(--r-sm);background:var(--sheet2);font-size:.86rem;color:var(--ink2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:6px 12px;cursor:pointer;font-weight:500;font-size:.88rem;min-height:36px}
+.chip:hover{border-color:var(--leaf)}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--sheet2);font-weight:700}
+
+/* round structure tiles */
+.kinds{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+.kind{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:center;text-align:left;border:1px solid var(--rule);background:var(--sheet);border-radius:var(--r-md);padding:10px;cursor:pointer}
+.kind:hover{border-color:var(--leaf);background:var(--sheet2)}
+.kind svg{width:30px;height:30px;color:var(--leaf)}
+.kind b{display:block;font-size:.9rem;line-height:1.25}
+.kind .sm{display:block;font-size:.76rem;line-height:1.35;margin-top:2px}
+
+/* inspector */
+.insp{border-top:1px solid var(--rule);padding:16px 18px 20px;background:var(--sheet2)}
+.insp-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.insp-head h3{font-size:1.1rem;font-weight:800;flex:1}
+.insp-head svg.k{width:28px;height:28px;color:var(--leaf);flex:none}
+.insp .fields{margin-top:12px}
+.zl{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+.zl li{border:1px solid var(--rule);border-radius:var(--r-sm);padding:10px;background:var(--sheet)}
+.zh{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.zh b{font-size:.92rem}
+.zh .sm{margin-left:auto}
+.zl .fields{margin-top:0;gap:8px}
+.zl label{font-size:.78rem}
+.zl select{min-height:36px;font-size:.88rem;padding:5px 8px}
+.zhint{font-size:.78rem;color:var(--ink2);margin:8px 0 0}
+.dot0{display:inline-block;width:16px;height:16px;border-radius:50%;border:1.5px dashed var(--ink2);flex:none}
+
+/* plant finder */
+.finder{display:grid;gap:10px;margin-bottom:10px}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:5px 11px;font-size:.84rem;font-weight:600;cursor:pointer;min-height:34px;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.pal{display:grid;gap:2px;max-height:min(320px,42vh);overflow:auto;border:1px solid var(--rule);border-radius:var(--r-md);padding:4px;background:var(--paper)}
+.pi{display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:2px 10px;text-align:left;width:100%;border:1px solid transparent;background:none;border-radius:var(--r-sm);padding:7px 9px;cursor:pointer}
+.pi:hover{background:var(--sheet)}
+.pi.on{background:var(--sheet);border-color:var(--leaf);box-shadow:inset 3px 0 0 var(--leaf)}
+.pi .pn{font-weight:600;font-size:.93rem}
+.pi .pm{grid-column:2;font-size:.78rem;color:var(--ink2)}
+.pi .pet{grid-row:1/3;grid-column:3}
+.pi .sw{grid-row:1/3}
+.sw{display:inline-block;width:16px;height:16px;border-radius:50%;flex:none;background:hsl(var(--h) var(--ps) var(--pl));box-shadow:inset 0 0 0 2px hsl(var(--h) 50% var(--dl))}
+.sw.d{border-radius:3px;transform:rotate(45deg) scale(.82);background:hsl(var(--h) 65% 45%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.8)}
+.pet{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;color:var(--ink);white-space:nowrap}
+.safe{background:var(--safe)}.cau{background:var(--cau)}.tox{background:var(--tox)}.ver{background:var(--ver)}
+.adj{display:inline-block;font-size:.7rem;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--mari-soft);color:var(--ink);vertical-align:1px}
+.factcard{margin-top:14px;border:1px solid var(--rule);border-radius:var(--r-md);padding:14px;background:var(--paper)}
+.fh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.fh h3{font-size:1.15rem;font-weight:800}
+.fh .pet{margin-left:auto}
+.fh p{margin:0}
+.thumb{width:52px;height:52px;border-radius:10px;overflow:hidden;flex:none;position:relative;background:hsl(var(--h) var(--ps) var(--pl))}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .ini{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:1.3rem;color:hsl(var(--h) 50% var(--dl));opacity:.7}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;margin:0 0 10px}
+.facts div{border-top:1px solid var(--rule);padding-top:6px}
+.facts dt{font-size:.78rem;color:var(--ink2)}
+.facts dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
+.win{font-size:.88rem}
+.vrow{display:grid;grid-template-columns:1.4fr 1fr;gap:10px;margin-top:14px}
+#vinfo{margin-top:8px}
+details.more{margin-top:16px;border-top:1px solid var(--rule);padding-top:12px}
+details.more summary{cursor:pointer;font-weight:600;color:var(--ink)}
+details.more[open] summary{margin-bottom:10px}
+
+/* companions */
+.sugg{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.sg{display:grid;grid-template-columns:18px 1fr auto;gap:2px 10px;align-items:start;width:100%;text-align:left;border:1px solid var(--rule);background:var(--paper);border-radius:var(--r-sm);padding:9px 10px;cursor:pointer}
+.sg:hover{border-color:var(--leaf)}
+.sg.on{border-color:var(--leaf);box-shadow:inset 3px 0 0 var(--leaf)}
+.sg .sw{margin-top:3px}
+.sg b{font-size:.93rem}
+.sg .why{grid-column:2/4;font-size:.8rem;color:var(--ink2)}
+.ev{font-size:.74rem;font-weight:600;color:var(--leaf);white-space:nowrap}
+.apart{margin-top:14px;padding:10px 12px;border-radius:var(--r-sm);background:var(--warn-bg);font-size:.85rem}
+.apart b{color:var(--warn)}
+.apart ul{margin:6px 0 0;padding-left:18px}
+
+/* ---------- board ---------- */
+.board{min-width:0}
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.brushes{display:flex;flex-wrap:wrap;gap:4px;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-md);padding:4px}
+.br{position:relative;flex-direction:row;align-items:center;gap:7px;padding:7px 11px;border-radius:var(--r-sm);cursor:pointer;color:var(--ink);font-weight:600;font-size:.9rem;min-height:40px}
+.br input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.br:hover{background:var(--sheet2)}
+.br:has(input:checked){background:var(--ink);color:var(--paper)}
+.br:has(input:focus-visible){outline:3px solid var(--mari);outline-offset:2px}
+.bi{width:16px;height:16px;flex:none;display:inline-block}
+.bi.bed{background:var(--loam);border-radius:3px;box-shadow:inset 0 0 0 1.5px var(--loam-dot)}
+.bi.path{background:var(--gravel);border-radius:3px;box-shadow:inset 0 0 0 1.5px var(--gravel-dot)}
+.bi.erase{border:1.5px dashed currentColor;border-radius:3px}
+.br svg{width:16px;height:16px;flex:none}
+.br .sw{width:16px;height:16px}
+.br-name{max-width:14ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-right{display:flex;gap:6px;margin-left:auto;align-items:center}
+.viewmenu{position:relative}
+.viewmenu>summary{list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 12px;border:1px solid var(--rule);border-radius:var(--r-sm);background:var(--sheet);font-weight:600;cursor:pointer;font-size:.9rem}
+.viewmenu>summary::-webkit-details-marker{display:none}
+.viewmenu>summary svg{width:16px;height:16px}
+.vm{position:absolute;right:0;top:calc(100% + 6px);z-index:10;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-md);padding:12px 14px;display:grid;gap:10px;min-width:220px;box-shadow:var(--lift)}
+.now{margin:0 0 10px;font-size:.9rem;color:var(--ink2);min-height:1.5em}
+.now b{color:var(--ink)}
+.sheetboard{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-lg);padding:14px;box-shadow:var(--lift)}
+#grid{touch-action:none;user-select:none;-webkit-user-select:none;border-radius:var(--r-md)}
+#grid svg{display:block;width:100%;height:auto;max-height:78vh;cursor:crosshair}
+#grid[data-tool="select"] svg{cursor:default}
+#grid[data-tool="select"] .shp{cursor:move}
+#grid .zn{cursor:pointer}
+#grid[data-tool="select"] .zn{cursor:move}
+#grid .hov{stroke:var(--mari)!important;stroke-width:3px!important;stroke-opacity:1!important}
+#grid .hovl{opacity:.72}
+#grid [data-h]{cursor:grab}
+#grid:focus-visible{outline:3px solid var(--mari);outline-offset:4px}
+.readout{margin:10px 2px 0;font-size:.86rem;color:var(--ink2);min-height:1.4em}
+.readout b{color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:8px;align-items:center}
+.lgs{display:inline-flex;align-items:center;gap:6px;font-size:.84rem;padding:3px 8px 3px 4px}
+.lgs i{display:inline-block;width:14px;height:14px;border-radius:3px}
+.lgc{display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;background:none;border-radius:999px;padding:4px 10px 4px 6px;cursor:pointer;font-size:.84rem;color:var(--ink);min-height:32px}
+.lgc:hover{border-color:var(--rule);background:var(--sheet2)}
+.lgc[aria-pressed="true"]{border-color:var(--ink);background:var(--sheet2)}
+.lgc .c{color:var(--ink2);font-variant-numeric:tabular-nums}
+.lgnote{font-size:.8rem;color:var(--ink2);margin-left:4px}
+.stats{display:flex;flex-wrap:wrap;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r-md);overflow:hidden;margin-top:14px}
+.stat{flex:1 1 118px;background:var(--sheet);padding:10px 12px}
+.stat b{display:block;font-size:1.35rem;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{font-size:.78rem;color:var(--ink2)}
+.checks{margin-top:16px}
+.checks h2{font-size:1rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.count{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 7px;border-radius:999px;background:var(--mari-soft);color:var(--ink);font-size:.8rem;font-weight:700}
+.n{position:relative;padding:8px 10px 8px 32px;margin:0 0 6px;border-radius:var(--r-sm);background:var(--sheet2);font-size:.88rem}
+.n::before{content:"";position:absolute;left:11px;top:13px;width:9px;height:9px;border-radius:50%;background:var(--leaf)}
+.n.w2{background:var(--warn-bg)}
+.n.w2::before{background:none;border-radius:0;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:11px solid var(--warn);left:9px;top:12px}
+.allgood{font-size:.88rem;color:var(--ink2)}
+
+/* ---------- report ---------- */
+.report{margin:28px 0 8px;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-lg);box-shadow:var(--lift);overflow:hidden}
+.rep-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:18px 20px 0}
+.rep-head h2{font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
+.tabs{display:flex;gap:2px;overflow-x:auto;padding:14px 16px 0;border-bottom:1px solid var(--rule);scrollbar-width:thin}
+.tab{border:0;background:none;padding:10px 14px;font-weight:600;color:var(--ink2);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-1px;min-height:44px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--mari)}
+.tab:hover{color:var(--ink)}
+.tp{padding:18px 20px 22px}
+.tp>.sub{color:var(--ink2);max-width:70ch}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+thead th{font-size:.78rem;color:var(--ink2);font-weight:600;background:var(--sheet2);position:sticky;top:0;z-index:1}
+tfoot th,tfoot td{border-bottom:0;font-weight:700}
+td input[type=number]{width:110px;min-height:36px}
+.link{border:0;background:none;padding:0;color:var(--leaf);text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-size:.8rem;font-weight:600}
+.cal td,.cal th{text-align:center;padding:6px 4px}
+.cal td.on{background:var(--leaf);color:var(--leaf-ink);font-weight:700}
+.cal td.on.now-m{box-shadow:inset 0 0 0 2px var(--mari)}
+.cal th.now-m{color:var(--ink);box-shadow:inset 0 -3px 0 var(--mari)}
+.kpi{display:flex;gap:10px 22px;flex-wrap:wrap;margin:14px 0}
+.kpi span{font-size:.86rem;color:var(--ink2)}
+.kpi b{color:var(--ink);font-size:1.05rem}
+.notice{padding:10px 12px;border-radius:var(--r-sm);background:var(--warn-bg);font-size:.88rem;margin:10px 0}
+.save-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.save-grid h3{font-size:1rem;margin-bottom:10px}
+.save-grid .row{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+.save-grid .row label{flex:1 1 160px}
+.method p{max-width:80ch;font-size:.9rem;color:var(--ink2)}
+.method h3{font-size:1rem;margin:16px 0 6px}
+
+/* ---------- plant library ---------- */
+.lib{margin-bottom:24px}
+.lib-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin:6px 0 14px}
+.lib-head h2{font-size:1.6rem;font-weight:800;letter-spacing:-.02em}
+.lib-head p{margin:4px 0 0;color:var(--ink2);max-width:70ch}
+.lib-bar{display:grid;grid-template-columns:minmax(200px,1.4fr) auto auto minmax(150px,.6fr);gap:10px;align-items:center;margin-bottom:16px;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-md);padding:10px}
+.lib-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;width:100%;height:100%;text-align:left;border:1px solid var(--rule);background:var(--sheet);border-radius:var(--r-md);overflow:hidden;cursor:pointer;padding:0;color:var(--ink)}
+.pcard:hover{border-color:var(--leaf);box-shadow:var(--lift)}
+.pimg{position:relative;display:block;aspect-ratio:4/3;background:hsl(var(--h) var(--ps) var(--pl));overflow:hidden}
+.pimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pimg .ini{position:absolute;inset:0;display:grid;place-items:center;font-size:2.6rem;font-weight:800;color:hsl(var(--h) 50% var(--dl));opacity:.55}
+.pbody{display:grid;gap:6px;padding:10px 12px 12px}
+.pt{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pt b{font-size:1rem}
+.pmeta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.8rem;color:var(--ink2)}
+.vmatch{font-size:.78rem;color:var(--leaf);font-weight:600}
+.ms{display:grid;grid-template-columns:repeat(12,1fr);gap:2px}
+.ms i{height:6px;border-radius:2px;background:var(--sheet2);box-shadow:inset 0 0 0 1px var(--rule)}
+.ms i.on{background:var(--leaf);box-shadow:none}
+.msl{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin-top:3px;font-size:.66rem;color:var(--ink2);text-align:center}
+.inuse{font-size:.74rem;font-weight:700;color:var(--leaf)}
+dialog#pdlg{width:min(1000px,calc(100vw - 24px));max-height:calc(100dvh - 24px);border:1px solid var(--rule);border-radius:var(--r-lg);padding:0;background:var(--sheet);color:var(--ink);box-shadow:0 30px 80px -30px rgba(0,0,0,.6)}
+dialog#pdlg::backdrop{background:rgba(10,20,14,.55)}
+.pd{padding:22px;position:relative}
+.pd-x{position:absolute;right:14px;top:14px;z-index:2}
+.pd-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:22px;align-items:start}
+.pd-fig{margin:0}
+.pd-fig .pimg{border-radius:var(--r-md)}
+.pd-fig figcaption{font-size:.76rem;color:var(--ink2);margin-top:6px}
+.pd-info h2{font-size:1.7rem;font-weight:800;letter-spacing:-.02em;margin:2px 0 8px;padding-right:44px}
+.pd h3{font-size:1rem;font-weight:700;margin:22px 0 8px;display:flex;align-items:center;gap:8px}
+.cl{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.cl li{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule);border-radius:999px;padding:4px 10px 4px 6px;font-size:.84rem;background:var(--paper)}
+.cl.bad li{background:var(--warn-bg);border-color:transparent}
+.vt{max-height:400px;overflow:auto;border:1px solid var(--rule);border-radius:var(--r-sm)}
+.vt td .sm{display:block;margin-top:2px;max-width:60ch}
+.vt td:nth-child(n+2){white-space:nowrap}
+.vt tr.cur td{background:var(--leaf-soft)}
+.vth{width:44px;height:44px;border-radius:8px;object-fit:cover;float:left;margin:0 10px 4px 0}
+
+/* ---------- light tool ---------- */
+.light{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start;margin-bottom:24px}
+.light .card{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-lg);padding:20px;box-shadow:var(--lift)}
+.light .card h2{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.light .fields{grid-template-columns:1fr}
+.bar{height:10px;border-radius:999px;background:var(--sheet2);overflow:hidden;min-width:80px;position:relative}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--mari);border-radius:999px}
+.bar i.met{background:var(--leaf)}
+.target{font-size:2.2rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.target span{font-size:.95rem;font-weight:500;color:var(--ink2);letter-spacing:0}
+
+footer{border-top:1px solid var(--rule);margin-top:28px;padding:18px 0 32px;font-size:.82rem;color:var(--ink2)}
+footer p{max-width:100ch}
+.ph{display:none}
+
+/* ---------- responsive ---------- */
+@media (max-width:1079px){
+  .studio{grid-template-columns:minmax(0,1fr);gap:14px}
+  .guide{display:contents}
+  .steps{order:1;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r-lg);position:static}
+  .board{order:2}
+  .insp{order:3;border:1px solid var(--rule);border-radius:var(--r-lg);box-shadow:var(--lift)}
+  .panels{order:4;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r-lg);box-shadow:var(--lift)}
+  .light{grid-template-columns:minmax(0,1fr)}
+  .lib-bar{grid-template-columns:1fr 1fr}
+  .lib-bar>label:first-child{grid-column:1/-1}
+}
+@media (max-width:720px){.pd-top{grid-template-columns:minmax(0,1fr)}.pd{padding:16px}}
+@media (max-width:640px){
+  .wrap{padding:0 12px}
+  .brand h1{font-size:1.2rem}.brand p{font-size:.85rem}.mark{width:36px;height:36px}
+  .views{width:100%}.views button{flex:1;padding:8px 6px;font-size:.88rem}
+  .steps{grid-auto-flow:row;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px;gap:4px}
+  .step{grid-template-columns:1fr;justify-items:center;text-align:center;padding:6px 2px;gap:4px}.step .num{grid-row:auto;width:26px;height:26px}
+  .step .ss{display:none}.lf{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.sf{display:inline;font-size:.78rem}.views .sf{font-size:inherit}
+  .stat{flex-basis:40%}
+  .sheetboard{padding:8px}
+  .tb-right{margin-left:0}
+  .br{padding:6px 9px;font-size:.84rem}
+  .fields,.vrow{grid-template-columns:minmax(0,1fr)}
+  .insp .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .zl .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tp{padding:16px 14px}
+  .lib-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .pbody{padding:8px 10px 10px}.pmeta{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+@media print{
+  body{background:#fff;color:#000}
+  .top .views,.guide,.toolbar,.now,.tabs,.rep-head .btns,#tp-save,.skip,.readout,#t-2,#t-3{display:none!important}
+  .studio{display:block}.sheetboard,.report{box-shadow:none;border-color:#999}
+  .tp[hidden]{display:block!important}.ph{display:block;font-size:1.05rem;margin:0 0 8px}
+  .tp{break-inside:avoid}#grid svg{max-height:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#grid">Skip to the bed grid</a>
+<div class="wrap">
+<header class="top">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 44 44" aria-hidden="true"><rect width="44" height="44" rx="11" fill="#2F6B3F"/><path d="M8 15h28M8 22h28M8 29h28M15 8v28M22 8v28M29 8v28" stroke="#ffffff" stroke-opacity=".18"/><circle cx="18.5" cy="18.5" r="7" fill="none" stroke="#F0A53A" stroke-width="2.2"/><circle cx="18.5" cy="18.5" r="2" fill="#F0A53A"/><path d="M29 24.5l4.5 4.5-4.5 4.5-4.5-4.5z" fill="#F0A53A"/></svg>
+    <div><h1>Garden Bed Designer</h1><p>Plan beds, round beds, and herb spirals one square foot at a time, with spacing, companions, soil, cost, and planting dates for NYC and Westchester.</p></div>
+  </div>
+  <nav class="views" aria-label="Tools"><button data-t="1" aria-pressed="true"><span class="lf">Bed designer</span><span class="sf" aria-hidden="true">Designer</span></button><button data-t="3" aria-pressed="false"><span class="lf">Plant library</span><span class="sf" aria-hidden="true">Plants</span></button><button data-t="2" aria-pressed="false"><span class="lf">Light calculator</span><span class="sf" aria-hidden="true">Light</span></button></nav>
+</header>
+
+<main>
+<section id="t-1" class="tool" aria-label="Bed designer">
+<div class="studio">
+  <aside class="guide" aria-label="Planning steps">
+    <ol class="steps">
+      <li><button class="step" data-step="1" aria-current="step"><span class="num">1</span><span class="st"><span class="lf">Shape your space</span><span class="sf" aria-hidden="true">Space</span></span><span class="ss" id="ss1"></span></button></li>
+      <li><button class="step" data-step="2"><span class="num">2</span><span class="st"><span class="lf">Choose plants</span><span class="sf" aria-hidden="true">Plants</span></span><span class="ss" id="ss2"></span></button></li>
+      <li><button class="step" data-step="3"><span class="num">3</span><span class="st"><span class="lf">Add companions</span><span class="sf" aria-hidden="true">Companions</span></span><span class="ss" id="ss3"></span></button></li>
+      <li><button class="step" data-step="4"><span class="num">4</span><span class="st"><span class="lf">Soil and materials</span><span class="sf" aria-hidden="true">Soil</span></span><span class="ss" id="ss4"></span></button></li>
+    </ol>
+    <div class="panels">
+      <select id="plant" hidden aria-hidden="true" tabindex="-1"></select>
+      <select id="comp" hidden aria-hidden="true" tabindex="-1"></select>
+
+      <div class="panel" id="step-1" role="region" aria-labelledby="s1h">
+        <h2 id="s1h" tabindex="-1">Shape your space</h2>
+        <p class="lede">Set the size of your area, paint where square beds and paths go, and add round structures. Each square is one square foot, and north is at the top.</p>
+        <div class="fields">
+          <label>Width (ft)<input type="number" id="cols" value="11" min="1" max="24" inputmode="numeric"></label>
+          <label>Length (ft)<input type="number" id="rows" value="6" min="1" max="24" inputmode="numeric"></label>
+        </div>
+        <h3 class="sh">Add a round structure</h3>
+        <div class="kinds">
+          <button type="button" class="kind" data-add="round"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="17" cy="17" r="14"/><circle cx="17" cy="17" r="7"/></svg><span><b>Round bed</b><span class="sm">Plant it in rings, wedges, or spiral rows.</span></span></button>
+          <button type="button" class="kind" data-add="ring"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="17" cy="17" r="14"/><circle cx="17" cy="17" r="5" stroke-dasharray="2 2"/><path d="M17 3v9M17 22v9M3 17h9M22 17h9"/></svg><span><b>Ring bed</b><span class="sm">A circle of beds around a path or seat.</span></span></button>
+          <button type="button" class="kind" data-add="keyhole"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 30.7A14 14 0 1 1 20 30.7V21h-6z"/><circle cx="17" cy="17" r="4" fill="currentColor" fill-opacity=".35"/></svg><span><b>Keyhole bed</b><span class="sm">A notch to reach in, compost basket in the middle.</span></span></button>
+          <button type="button" class="kind" data-add="spiral"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M17 17c0-2 2-3 3.5-2s2 4-.5 5.5-6.5.5-7.5-3 1.5-8 6-8.5 9.5 3 9.5 7.5-3.5 10-9 10.5S3.5 24 4 17"/></svg><span><b>Herb spiral</b><span class="sm">Raised stone spiral, dry on top and moist below.</span></span></button>
+        </div>
+        <div id="shlist" style="margin-top:10px"></div>
+        <h3 class="sh">Start from a layout</h3>
+        <div class="chips" id="tpls"></div>
+        <h3 class="sh">Square beds</h3>
+        <div class="btns"><button class="btn ghost" id="allbed">Fill empty squares with bed</button><button class="btn ghost" id="clear">Clear everything</button></div>
+        <p class="tip">A sample garden is loaded so you can see how the planner works. Paint square beds with the Bed and Path brushes. To move or resize a round structure, use the Select tool: drag the structure, or drag the dot on its edge.</p>
+        <button class="btn next" data-go="2">Next: choose plants</button>
+      </div>
+
+      <div class="panel" id="step-2" role="region" aria-labelledby="s2h" hidden>
+        <h2 id="s2h" tabindex="-1">Choose your plants</h2>
+        <p class="lede">Pick a plant, then paint squares or click a section of a round structure. Each dot on the grid is one plant at its spacing.</p>
+        <div class="finder">
+          <label><span class="vh">Search plants</span><input type="search" id="q-plant" placeholder="Search plants" autocomplete="off"></label>
+          <div class="seg" role="group" aria-label="Filter plants by type" data-mode="plant"></div>
+          <label class="check"><input type="checkbox" id="safe-plant">Pet-safe only</label>
+        </div>
+        <div class="pal" id="pal-plant" role="group" aria-label="Plants"></div>
+        <div id="facts" class="factcard" aria-live="polite"></div>
+        <div class="vrow" id="vrow">
+          <label>Variety of <span id="vname">plant</span><select id="variety"></select></label>
+          <label>Find a variety<input type="search" id="vfilter" placeholder="Type to filter" autocomplete="off"></label>
+        </div>
+        <p id="vinfo" class="sm" aria-live="polite"></p>
+        <details class="more" id="adjust"><summary>Adjust growing needs</summary>
+          <p class="sm">Use this when your variety, seed packet, or your own experience says something different. Changes apply to every <span class="adjname">plant</span> in your plan, the plant library, and the light calculator.</p>
+          <div class="fields" id="adj-f"></div>
+          <button class="btn ghost small" id="adj-reset" style="margin-top:12px">Reset to defaults</button>
+        </details>
+        <details class="more"><summary>Spacing basis</summary>
+          <label>Spacing basis<select id="basis"><option value="ext">Extension in-row spacing</option><option value="sfg">Square-foot gardening chart</option></select></label>
+          <p class="sm" style="margin-top:8px">Extension spacing comes from university guides. The square-foot chart packs plants tighter. Switch to compare how many plants fit.</p>
+        </details>
+        <button class="btn next" data-go="3">Next: add companions</button>
+      </div>
+
+      <div class="panel" id="step-3" role="region" aria-labelledby="s3h" hidden>
+        <h2 id="s3h" tabindex="-1">Add companions</h2>
+        <p class="lede">Companions share space with a main plant. Pick one that pairs well, then paint over squares or sections that already have a main plant.</p>
+        <label>Show companions for<select id="ctx"></select></label>
+        <div id="sugg" aria-live="polite"></div>
+        <h3 class="sh">How much room companions get</h3>
+        <label>Companion share of each square: <b id="shv">25</b>%<input type="range" id="share" min="10" max="50" step="5" value="25"></label>
+        <p class="sm" style="margin-top:6px">A bigger share fits more small companions into each square or section.</p>
+        <div class="btns" style="margin-top:12px"><button class="btn ghost" id="nocomp">Use the remove-companions brush</button></div>
+        <details class="more"><summary>Browse every plant as a companion</summary>
+          <div class="finder">
+            <label><span class="vh">Search companions</span><input type="search" id="q-comp" placeholder="Search plants" autocomplete="off"></label>
+            <div class="seg" role="group" aria-label="Filter companions by type" data-mode="comp"></div>
+            <label class="check"><input type="checkbox" id="safe-comp">Pet-safe only</label>
+          </div>
+          <div class="pal" id="pal-comp" role="group" aria-label="Companion plants"></div>
+        </details>
+        <button class="btn next" data-go="4">Next: soil and materials</button>
+      </div>
+
+      <div class="panel" id="step-4" role="region" aria-labelledby="s4h" hidden>
+        <h2 id="s4h" tabindex="-1">Soil and materials</h2>
+        <p class="lede">Tell the planner how deep to fill the beds and what goes on the paths. Quantities, weight, and water update as you go.</p>
+        <fieldset><legend>Bed fill</legend><div class="fields">
+          <label>Soil depth (in)<input type="number" id="depth" value="12" min="2" max="48"></label>
+          <label>Settling allowance (%)<input type="number" id="settle" value="10" min="0" max="40"></label>
+          <label class="full">Soil mix<select id="mix"></select></label>
+          <label>Mulch depth (in)<input type="number" id="mulch" value="3" min="0" max="6" step="0.5"></label>
+          <label>Soil bag size (cu ft)<input type="number" id="bagS" value="1.5" min="0.25" step="0.25"></label>
+        </div><p class="sm" style="margin-top:8px">Herb spirals use their own height instead of the soil depth.</p></fieldset>
+        <fieldset><legend>Paths and base</legend><div class="fields">
+          <label>Path material<select id="pathmat"><option value="gravel">Gravel</option><option value="mulch">Mulch</option><option value="none">None</option></select></label>
+          <label>Path depth (in)<input type="number" id="pathd" value="3" min="1" max="8" step="0.5"></label>
+          <label>Stone under bed (in)<input type="number" id="base" value="0" min="0" max="8" step="0.5"></label>
+          <label>Mulch bag size (cu ft)<input type="number" id="bagM" value="2" min="0.25" step="0.25"></label>
+        </div></fieldset>
+        <fieldset><legend>Water and sun</legend><div class="fields">
+          <label>Water per week (in)<input type="number" id="wk" value="1" min="0.5" max="3" step="0.25"></label>
+          <label>Shade check at<select id="sea"><option value="23.44">Summer noon</option><option value="0">Spring or fall noon</option><option value="-23.44">Winter noon</option></select></label>
+        </div></fieldset>
+        <button class="btn next" id="toplan">See the full plan</button>
+      </div>
+    </div>
+    <div class="insp" id="insp" hidden aria-live="polite"></div>
+  </aside>
+
+  <div class="board">
+    <div class="toolbar">
+      <div class="brushes" role="radiogroup" aria-label="Tool">
+        <label class="br" title="Select, move, and resize round structures"><input type="radio" name="tool" value="select"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3 1.5l9.5 6.2-4.3.9 2.6 4.6-1.8 1-2.6-4.6L3 12.5z"/></svg>Select</label>
+        <label class="br"><input type="radio" name="tool" value="bed" checked><span class="bi bed" aria-hidden="true"></span>Bed</label>
+        <label class="br"><input type="radio" name="tool" value="path"><span class="bi path" aria-hidden="true"></span>Path</label>
+        <label class="br"><input type="radio" name="tool" value="plant"><span class="sw" id="bs-plant" aria-hidden="true"></span><span class="br-name" id="bl-plant">Plant</span></label>
+        <label class="br"><input type="radio" name="tool" value="comp"><span class="sw d" id="bs-comp" aria-hidden="true"></span><span class="br-name" id="bl-comp">Companion</span></label>
+        <label class="br"><input type="radio" name="tool" value="erase"><span class="bi erase" aria-hidden="true"></span>Erase</label>
+      </div>
+      <div class="tb-right">
+        <details class="viewmenu"><summary><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M1 8s2.6-5 7-5 7 5 7 5-2.6 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2.2"/></svg>View</summary>
+          <div class="vm" role="group" aria-label="What the grid shows">
+            <label class="check"><input type="checkbox" data-view="labels">Plant names</label>
+            <label class="check"><input type="checkbox" data-view="dots">Plant positions</label>
+            <label class="check"><input type="checkbox" data-view="comps">Companions</label>
+            <label class="check"><input type="checkbox" data-view="rings">Spacing circles</label>
+          </div>
+        </details>
+        <button class="icon-btn" id="undo" disabled aria-label="Undo" title="Undo (Ctrl+Z)"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5L3 9l4 4"/><path d="M3 9h9a5 5 0 010 10h-2"/></svg></button>
+        <button class="icon-btn" id="redo" disabled aria-label="Redo" title="Redo (Ctrl+Shift+Z)"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5l4 4-4 4"/><path d="M17 9H8a5 5 0 000 10h2"/></svg></button>
+      </div>
+    </div>
+    <p class="now" id="brush-now"></p>
+    <div class="sheetboard">
+      <h2 class="ph">Bed plan</h2>
+      <div id="grid" tabindex="0" role="application" aria-roledescription="garden grid" aria-label="Garden grid. Arrow keys move between squares, Space applies the selected tool. With Select, Shift and the arrow keys move the selected structure and Delete removes it."></div>
+      <p class="readout" id="readout" aria-hidden="true"></p>
+      <div id="legend" class="legend" aria-label="Key. Choose a plant to highlight it on the grid."></div>
+      <div id="kpi" class="stats"></div>
+    </div>
+    <section class="checks" aria-labelledby="chk-h">
+      <h2 id="chk-h">Things to check <span class="count" id="chk-n">0</span></h2>
+      <div id="warn" aria-live="polite"></div>
+    </section>
+  </div>
+</div>
+
+<section class="report" id="report" aria-labelledby="rep-h">
+  <div class="rep-head">
+    <h2 id="rep-h" tabindex="-1">Your plan</h2>
+    <div class="btns"><button class="btn ghost" id="gosave">Save and share</button><button class="btn ghost" id="print">Print plan</button></div>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Plan details">
+    <button class="tab" role="tab" id="tab-plants" aria-controls="tp-plants" aria-selected="true">Plants and spacing</button>
+    <button class="tab" role="tab" id="tab-inter" aria-controls="tp-inter" aria-selected="false" tabindex="-1">Companions</button>
+    <button class="tab" role="tab" id="tab-mat" aria-controls="tp-mat" aria-selected="false" tabindex="-1">Materials</button>
+    <button class="tab" role="tab" id="tab-cost" aria-controls="tp-cost" aria-selected="false" tabindex="-1">Cost</button>
+    <button class="tab" role="tab" id="tab-cal" aria-controls="tp-cal" aria-selected="false" tabindex="-1">When to plant</button>
+    <button class="tab" role="tab" id="tab-save" aria-controls="tp-save" aria-selected="false" tabindex="-1">Save and share</button>
+    <button class="tab" role="tab" id="tab-method" aria-controls="tp-method" aria-selected="false" tabindex="-1">Method and sources</button>
+  </div>
+  <div class="tp" id="tp-plants" role="tabpanel" aria-labelledby="tab-plants" tabindex="0"><h3 class="ph">Plants and spacing</h3><div id="plants"></div></div>
+  <div class="tp" id="tp-inter" role="tabpanel" aria-labelledby="tab-inter" tabindex="0" hidden><h3 class="ph">Companions</h3><div id="inter"></div></div>
+  <div class="tp" id="tp-mat" role="tabpanel" aria-labelledby="tab-mat" tabindex="0" hidden><h3 class="ph">Materials</h3><div id="mat"></div></div>
+  <div class="tp" id="tp-cost" role="tabpanel" aria-labelledby="tab-cost" tabindex="0" hidden><h3 class="ph">Cost estimate</h3><p class="sub">Enter your own prices. They're saved in this browser, and lines left blank aren't counted.</p><div id="cost"></div></div>
+  <div class="tp" id="tp-cal" role="tabpanel" aria-labelledby="tab-cal" tabindex="0" hidden><h3 class="ph">When to plant</h3><div id="cal"></div></div>
+  <div class="tp" id="tp-save" role="tabpanel" aria-labelledby="tab-save" tabindex="0" hidden>
+    <div class="save-grid">
+      <div><h3>Save in this browser</h3>
+        <div class="row"><label>Design name<input id="dname" placeholder="Front yard bed"></label><button class="btn" id="save">Save design</button></div>
+        <div class="row" style="margin-top:10px"><label>Saved designs<select id="saved"></select></label><button class="btn ghost" id="load">Open</button><button class="btn ghost" id="del">Delete</button></div>
+      </div>
+      <div><h3>Share or move a design</h3>
+        <div class="btns"><button class="btn ghost" id="link">Copy share link</button><button class="btn ghost" id="export">Show design code</button><button class="btn ghost" id="import">Open from code</button></div>
+        <label style="margin-top:10px">Design code<textarea id="code" rows="3" placeholder="Your design code appears here. Paste a code and choose Open from code."></textarea></label>
+      </div>
+    </div>
+    <p id="msg" class="sm" role="status" style="margin-top:12px"></p>
+  </div>
+  <div class="tp method" id="tp-method" role="tabpanel" aria-labelledby="tab-method" tabindex="0" hidden>
+    <h3>Varieties and adjusted needs</h3>
+    <p>Picking a variety changes that plant's spacing (midpoint of the recorded range) and height (midpoint) everywhere it appears. Adjusted growing needs override the species or variety values for spacing, height, sun, soil depth, and light targets, and are saved with the design. Pet flags and companion data stay at the species level. Variety data are imported and marked for verification in the workbook.</p>
+    <h3>Square beds</h3>
+    <p>Soil = bed sq ft x depth (in) / 12 x (1 + settling). Mulch and gravel = area x depth / 12. 27 cu ft = 1 cu yd. Water = sq ft x inches x 0.623 gal. Weight = cu yd x lb per cu yd. Load = (soil x saturated multiplier + other layers) / bed sq ft. Edging counts bed edges that touch a non-bed square or the grid edge. Spacing dots are placed on a lattice starting at the top-left of each plant's painted area, so irregular shapes work and a plant that doesn't fit shows 0. Each square painted with a small companion gets at least one plant; where its spacing allows more, the count is the solo density per square x the share, placed farthest from the main plants. Companions needing more than 12 in are spaced like main plants.</p>
+    <h3>Round structures</h3>
+    <p>Areas come from the geometry: a ring is pi x (outer radius² - inner radius²), and a wedge is its share of that. Plants in rings and wedges sit in concentric rows one spacing apart, evenly spread around each row. Spirals place plants along the spiral path, with extra rows where the band is wide enough. Edging for round beds is the circumference. A keyhole bed's notch counts as path, and its center is a compost basket. A ring bed's center counts as path.</p>
+    <p>A herb spiral's planting band follows the spiral between 5 in stone walls, sloping from its center height down to a 6 in base course at the low end. Soil = band area x average height. Stone = wall length x wall width x average height. Grid squares under a round structure are left out of the totals.</p>
+    <h3>Checks</h3>
+    <p>The shade check uses the sun's noon angle at 40.9 N: shadow length = height / tan(angle). Round beds flag outer rings that are taller than inner rings, and herb spirals flag plants that need more sun below plants that need less. Companion relationships and evidence levels come from the pairing data.</p>
+    <h3>Photos</h3>
+    <p>Plant photos load from Wikipedia and Wikimedia Commons when you're online, with the photographer and license shown under each photo. Photos listed in images.json (your own, for example) take their place.</p>
+    <h3>Sources</h3>
+    <p>Soil mixes from University of Minnesota, Iowa State, and University of Maryland Extension; settling and top-dressing from Illinois Extension; no gravel layer under raised beds from Missouri IPM and Ask Extension; mulch depth from Iowa State and UC Cooperative Extension; gravel path depth and weights from supplier guides; watering from University of Minnesota Extension; spacing from UC Master Gardeners, UGA, Missouri, and square-foot-gardening charts (Phipps Conservatory); soil depth by crop from Walter Reeves plus root-class estimates. Planting windows are NYC and Westchester estimates to confirm with Cornell Cooperative Extension. Confirm soil safety (lead test), local codes, and roof load limits before building.</p>
+  </div>
+</section>
+</section>
+
+<section id="t-3" class="tool lib" aria-labelledby="lib-h" hidden>
+  <div class="lib-head">
+    <div><h2 id="lib-h">Plant library</h2><p id="lib-sub">Every plant in the planner with its varieties, growing needs, companions, and planting months. Open a plant to choose a variety for your plan.</p></div>
+  </div>
+  <div class="lib-bar">
+    <label><span class="vh">Search plants and varieties</span><input type="search" id="lib-q" placeholder="Search plants and varieties, like Brandywine" autocomplete="off"></label>
+    <div class="seg" role="group" aria-label="Filter by type" data-mode="lib"></div>
+    <label class="check"><input type="checkbox" id="lib-safe">Pet-safe only</label>
+    <label><span class="vh">Sort</span><select id="lib-sort"><option value="az">Sort: A to Z</option><option value="type">Sort: by type</option><option value="sun">Sort: least sun first</option><option value="sp">Sort: closest spacing first</option><option value="vars">Sort: most varieties</option></select></label>
+  </div>
+  <p class="sm" id="lib-count" role="status"></p>
+  <ul class="lib-grid" id="lib-grid"></ul>
+</section>
+
+<section id="t-2" class="tool" aria-label="Light calculator" hidden>
+  <div class="light">
+    <div class="card">
+      <h2>Supplemental light</h2>
+      <p class="lede">See how much grow light a plant needs each month to hit its daily light target outdoors, in a greenhouse, or fully indoors.</p>
+      <div class="fields">
+        <label>Plant<select id="lp"></select></label>
+        <label>Target<select id="lt"><option value="o">Optimum</option><option value="m">Minimum</option></select></label>
+        <label>Your target (mol/m²/day)<input type="number" id="ltv" min="1" max="60" step="0.5"><span class="hint" id="ltv-h"></span></label>
+        <label>Setting<select id="lm"><option value="out">Outdoors</option><option value="gh">Greenhouse</option><option value="in">Indoors, no sun</option></select></label>
+        <label>Light reaching plants (%)<input type="number" id="tr" value="65" min="5" max="100"></label>
+        <label>Lights on (hours per day)<input type="number" id="lh" value="16" min="4" max="24"></label>
+      </div>
+    </div>
+    <div class="card" aria-live="polite" id="out3"></div>
+  </div>
+</section>
+</main>
+
+<dialog id="pdlg" aria-labelledby="pd-h"><div class="pd"><button type="button" class="icon-btn pd-x" id="pd-x" aria-label="Close"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button><div id="pd-body"></div></div></dialog>
+
+<footer>
+  <p>Saved designs stay in this browser; use the design code or share link to move one elsewhere. Variety data: Wind River Greens Plant Variety Database (CC BY 4.0, plants.windrivergreens.com) plus curated notes. Plant photos: Wikipedia and Wikimedia Commons contributors, credited under each photo. Draft data compiled for this project: verify before building. Pet flags follow the ASPCA lists and must be confirmed at aspca.org. Light targets: MSU, Purdue, Hort Americas. Monthly sunlight values are placeholders until replaced with NASA POWER data.</p>
+  <p>Designed and built by DeAndre Brown.</p>
+</footer>
+</div>
+<div id="live" class="vh" aria-live="polite"></div>
+
+<script>
+const DATA=/*DATA*/,K=/*CONST*/;
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const P=DATA.plants,byN=Object.fromEntries(P.map(p=>[p.n,p])),idx=Object.fromEntries(P.map((p,i)=>[p.n,i])),VAR=DATA.vars||{},IMG=DATA.img||{};
+let VM={},OV={};
+const OVK=[['sp','Space apart','in',1,120,1],['h','Height','in',1,240,1],['s','Sun','hours a day',0,14,.5],['dm','Minimum soil depth','in',2,48,1],['do','Light target, optimum','mol/m²/day',1,60,.5],['dl','Light target, minimum','mol/m²/day',1,60,.5]];
+function effV(i){const p=P[i],v=VM[i];if(!v)return p;return Object.assign({},p,{v:v[0],vd:v[6],sp:v[2]!=null?v[2]:p.sp,lo:v[3]!=null?v[3]:p.lo,hi:v[4]!=null?v[4]:p.hi,h:v[5]!=null?v[5]:p.h})}
+function eff(i){const r=effV(i),o=OV[i];if(!o||!Object.keys(o).length)return r;const e=Object.assign({},r,o,{adj:Object.keys(o)});if(e.di<e.dm)e.di=e.dm;return e}
+const isAdj=(i,k)=>!!(OV[i]&&OV[i][k]!=null);
+const PET={S:['Pet-safe','safe'],C:['Pet caution','cau'],T:['Toxic to pets','tox'],V:['Pets: verify','ver']};
+const pill=p=>`<span class="pet ${PET[p.pet][1]}">${PET[p.pet][0]}</span>`;
+const REL={'2':'Strong benefit','1':'Benefit','0':'Neutral','-1':'Caution','-2':'Avoid'},EVN={W:'Well-supported',T:'Traditional',U:'Uncertain'},WT={W:1,T:.7,U:.4},MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],MONL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const PS={},CMP={};DATA.pairs.forEach(([a,b,s,e,m])=>{PS[a+'|'+b]=PS[b+'|'+a]=[s,DATA.mech[m],e];[[a,b],[b,a]].forEach(([x,y])=>(CMP[x]=CMP[x]||[]).push({n:y,s,e,m:DATA.mech[m]}))});
+const f1=n=>(Math.round(n*10)/10).toLocaleString(),f0=n=>Math.round(n).toLocaleString();
+const LS={get:k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
+let COLS=11,ROWS=6,G=[],SH=[],SM=[],SEL=-1,down=false,last='',PC={},LAST={q:{},per:0,fabric:0,vs:0,water:0},FOC=null,hist=[],hp=-1,STEP=1,CTXSIG=null,COSTTOT=null,HL=null,DRAG=null,GEO={ppf:40,ml:0,mt:0},HOVZ=null;
+let VIEW=Object.assign({labels:true,dots:true,comps:true,rings:false},LS.get('gbd:view')||{});
+const mk=(c,r)=>Array.from({length:r},(_,y)=>Array.from({length:c},(_,x)=>(G[y]&&G[y][x])||{t:0,p:null,q:[]}));
+const HUEMAP={},hue0=i=>(i*114+28)%360,hue=i=>HUEMAP[i]!=null?HUEMAP[i]:hue0(i);
+const hd=(a,b)=>{const d=Math.abs(a-b)%360;return Math.min(d,360-d)};
+function assignHues(ids){ids.forEach(i=>{if(HUEMAP[i]!=null)return;const others=ids.filter(j=>j!==i&&HUEMAP[j]!=null).map(j=>HUEMAP[j]),gap=h=>others.length?Math.min(...others.map(o=>hd(h,o))):360;
+  let best=hue0(i),bg=gap(best);if(bg<42)for(let h=0;h<360;h+=6){const g=gap(h);if(g>bg+.5){bg=g;best=h}}HUEMAP[i]=best})}
+const sw=(i,d)=>`<i class="sw${d?' d':''}" style="--h:${hue(i)}" aria-hidden="true"></i>`;
+const plural=(n,w,pl)=>`${n} ${n===1?w:(pl||w+'s')}`;
+const live=m=>{const l=$('#live');l.textContent='';setTimeout(()=>{l.textContent=m},40)};
+const tool=()=>$('input[name=tool]:checked').value;
+function setTool(v){const r=$(`input[name=tool][value="${v}"]`);if(r)r.checked=true;brushStatus()}
+const VIEWS={'1':'','2':'light','3':'library'};
+function show(t,noHash){$$('.tool').forEach(e=>e.hidden=e.id!=='t-'+t);$$('.views button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===t)));
+  if(t==='3'){renderLib();loadPhotos()}if(t==='2')light();
+  if(!noHash&&!location.hash.startsWith('#d=')){try{history.replaceState(null,'',VIEWS[t]?'#'+VIEWS[t]:location.pathname+location.search)}catch(e){}}}
+$$('.views button').forEach(b=>b.onclick=()=>{show(b.dataset.t);window.scrollTo(0,0)});
+
+/* ================= round structure geometry ================= */
+const TAU=Math.PI*2,D2R=Math.PI/180;
+const snapH=v=>Math.round(v*2)/2;
+const KIND={
+  round:{name:'Round bed',r:2.5,n:3,lay:'rings',lays:['rings','wedges','spiral']},
+  ring:{name:'Ring bed',r:3,ri:1,n:4,lay:'wedges',lays:['rings','wedges']},
+  keyhole:{name:'Keyhole bed',r:3,ri:.75,sw:1.5,n:4,lay:'wedges',rot:90},
+  spiral:{name:'Herb spiral',r:3,hgt:3,n:3,lay:'spiral',rot:90}};
+const LAYN={rings:'Rings',wedges:'Wedges',spiral:'Spiral rows'};
+const DIRS=['East','Southeast','South','Southwest','West','Northwest','North','Northeast'];
+const dirName=a=>DIRS[Math.round((((a/D2R)%360)+360)%360/45)%8];
+const ROTS=[[270,'North'],[0,'East'],[90,'South'],[180,'West']];
+const HERBN={1:['Whole spiral'],2:['Top','Bottom'],3:['Top','Middle','Bottom'],4:['Top','Upper middle','Lower middle','Bottom'],5:['Top','Upper middle','Middle','Lower middle','Bottom']};
+const HERBMIX={1:['Thyme'],2:['Rosemary','Parsley'],3:['Rosemary','Thyme','Parsley'],4:['Rosemary','Thyme','Chives','Parsley'],5:['Rosemary','Sage','Thyme','Chives','Parsley']};
+function newShape(k,cx,cy,o){const d=KIND[k],s={k,cx,cy,r:d.r,n:d.n,lay:d.lay,ri:d.ri||0,sw:d.sw||0,hgt:d.hgt||0,rot:d.rot!=null?d.rot:90,z:[]};Object.assign(s,o||{});clampShape(s);return s}
+function maxN(s){if(s.k==='spiral'||s.lay==='spiral')return 5;if(s.lay==='wedges')return 8;const r0=s.k==='round'?0:s.ri;return Math.max(1,Math.min(5,Math.floor((s.r-r0)/.5)))}
+function clampShape(s){
+  const mr=Math.max(1,Math.min(COLS,ROWS)/2);s.r=Math.max(Math.min(1.5,mr),Math.min(snapH(s.r),mr,10));
+  if(s.k==='ring')s.ri=Math.max(.5,Math.min(snapH(s.ri)||1,s.r-1));
+  if(s.k==='keyhole'){s.ri=Math.max(.5,Math.min(s.ri||.75,s.r-1.25));s.sw=Math.max(1,Math.min(s.sw||1.5,2.5))}
+  if(s.k==='spiral'){s.hgt=Math.max(1,Math.min(s.hgt||3,4));s.lay='spiral'}
+  if(s.k==='keyhole')s.lay='wedges';
+  s.n=Math.max(1,Math.min(Math.round(s.n)||1,maxN(s)));if(s.lay==='wedges')s.n=Math.max(2,s.n);
+  s.cx=Math.max(s.r,Math.min(COLS-s.r,snapH(s.cx)));s.cy=Math.max(s.r,Math.min(ROWS-s.r,snapH(s.cy)));
+  while(s.z.length<s.n)s.z.push({p:null,q:[]});s.z.length=s.n;
+}
+function ringName(s,i,n){if(s.k==='round')return i===0?(n===1?'Whole bed':'Center circle'):`Ring ${i+1}${i===n-1?' (outer)':''}`;return n===1?'Planting ring':`Ring ${i+1}${i===0?' (inner)':i===n-1?' (outer)':''}`}
+function zoneNames(s){const n=s.n;if(s.k==='spiral')return HERBN[n];if(s.lay==='spiral')return Array.from({length:n},(_,i)=>n===1?'Spiral row':i===0?'Inner spiral':i===n-1?'Outer spiral':`Spiral part ${i+1}`);
+  if(s.lay==='rings')return Array.from({length:n},(_,i)=>ringName(s,i,n));return polarZones(s).map(z=>z.name)}
+function polarZones(s){
+  const R=s.r,r0=s.k==='round'?0:s.ri,n=s.n,out=[];
+  if(s.lay==='rings'){for(let i=0;i<n;i++){const a=r0+(R-r0)*i/n,b=r0+(R-r0)*(i+1)/n;out.push({t:'p',r0:a,r1:b,a0:0,a1:TAU,full:1,name:ringName(s,i,n)})}return out}
+  let st=-Math.PI/2-Math.PI/n,span=TAU;
+  if(s.k==='keyhole'){const rot=s.rot*D2R,d=Math.atan2(s.sw/2,(r0+R)/2)+.03;st=rot+d;span=TAU-2*d}
+  const cnt={},seen={};
+  for(let i=0;i<n;i++){const a0=st+span*i/n,a1=st+span*(i+1)/n,b=dirName((a0+a1)/2);cnt[b]=(cnt[b]||0)+1;out.push({t:'p',r0,r1:R,a0,a1,name:b})}
+  out.forEach(z=>{const b=z.name;seen[b]=(seen[b]||0)+1;z.name=cnt[b]>1?`${b} section ${seen[b]}`:`${b} section`});
+  return out;
+}
+const inPolar=(z,x,y)=>{const r=Math.hypot(x,y);if(r<z.r0||r>=z.r1)return false;if(z.full)return true;const a=((Math.atan2(y,x)-z.a0)%TAU+TAU)%TAU;return a<(z.a1-z.a0)};
+function keyEx(s){const c=Math.cos(s.rot*D2R),si=Math.sin(s.rot*D2R);return (x,y,pad)=>{const u=x*c+y*si,v=-x*si+y*c;return u>0&&Math.abs(v)<s.sw/2+pad}}
+function spiralCL(s,p){
+  const R=s.r,r0=p/2,r1=Math.max(r0+.05,R-p/2),f1=TAU*r0/p,f2=TAU*r1/p,off=s.rot*D2R-f2,pts=[];let L=0,px=0,py=0;
+  for(let f=f1;;f=Math.min(f2,f+.035)){const rho=p*f/TAU,a=f+off,x=rho*Math.cos(a),y=rho*Math.sin(a);if(pts.length)L+=Math.hypot(x-px,y-py);pts.push([x,y,L,0,0]);px=x;py=y;if(f>=f2)break}
+  pts.forEach((q,i)=>{const a=pts[Math.max(0,i-1)],b=pts[Math.min(pts.length-1,i+1)],dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;q[3]=-dy/l;q[4]=dx/l});
+  return{pts,L,off,f2};
+}
+function spiralWall(p,cl){const out=[];for(let g=0;g<=cl.f2+Math.PI+1e-9;g+=.035){const rho=p*g/TAU,a=g-Math.PI+cl.off;out.push([rho*Math.cos(a),rho*Math.sin(a)])}return out}
+function at(cl,l){const P_=cl.pts;let lo=0,hi=P_.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(P_[m][2]<l)lo=m;else hi=m}const a=P_[lo],b=P_[hi],t=b[2]>a[2]?(l-a[2])/(b[2]-a[2]):0;return[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[3],a[4]]}
+function polarPack(z,s,ex){
+  const out=[],span=z.full?TAU:z.a1-z.a0,rows=[];
+  if(z.full&&z.r0<=1e-9){if(z.r1>=s*.35)out.push([0,0]);for(let rho=s;rho<=z.r1-s/2+1e-9;rho+=s)rows.push(rho)}
+  else{for(let rho=z.r0+s/2;rho<=z.r1-s/2+1e-9;rho+=s)rows.push(rho);if(!rows.length&&z.r1-z.r0>=s*.5)rows.push((z.r0+z.r1)/2)}
+  rows.forEach(rho=>{let n=Math.floor(rho*span/s+1e-9);if(!z.full&&n===0&&rho*span>=s*.6)n=1;for(let j=0;j<n;j++){const a=z.a0+(j+.5)*span/n;out.push([rho*Math.cos(a),rho*Math.sin(a)])}});
+  return ex?out.filter(([x,y])=>!ex(x,y,s*.3)):out;
+}
+function linePack(cl,L0,L1,width,s){
+  const rows=Math.max(1,Math.floor(width/s+1e-9)),len=L1-L0,pos=[],out=[];
+  for(let d=s/2;d<=len-s/2+1e-9;d+=s)pos.push(L0+d);if(!pos.length&&len>=s*.6)pos.push((L0+L1)/2);
+  pos.forEach(l=>{const q=at(cl,l);for(let j=0;j<rows;j++){const o=(j-(rows-1)/2)*s;out.push([q[0]+q[2]*o,q[1]+q[3]*o])}});return out;
+}
+function pickComp(cand,mains,area,sIn,share,big){
+  if(big||!cand.length)return cand;const target=Math.max(1,Math.min(cand.length,Math.round(area*(12/sIn)**2*share)));
+  return cand.map(c=>[c,mains.length?Math.min(...mains.map(m=>(m[0]-c[0])**2+(m[1]-c[1])**2)):-(c[0]**2+c[1]**2)]).sort((a,b)=>b[1]-a[1]).slice(0,target).map(x=>x[0]);
+}
+function shapeModel(s,spc,share){
+  const m={zones:[],bed:0,path:0,edge:0,flat:0,soil:0,stone:0},R=s.r;let pack;
+  if(s.lay==='spiral'){
+    const herb=s.k==='spiral';let p;
+    if(herb)p=Math.max(1.25,Math.min(2,R/2));
+    else{const mx=Math.max(12,...s.z.filter(z=>z.p!=null).map(z=>spc(eff(z.p))));p=Math.max(1,Math.min(2.5,Math.ceil(mx/12*4)/4))}
+    const wall=herb?.4:0,bw=p-wall,cl=spiralCL(s,p),names=zoneNames(s);
+    Object.assign(m,{p,bw,wall,cl,wallPts:spiralWall(p,cl),herb});
+    for(let i=0;i<s.n;i++){const L0=cl.L*i/s.n,L1=cl.L*(i+1)/s.n;m.zones.push({t:'l',L0,L1,area:(L1-L0)*bw,name:names[i]})}
+    m.bed=m.zones.reduce((a,z)=>a+z.area,0);
+    if(herb){const mh=(s.hgt+.5)/2;let wl=0;m.wallPts.forEach((q,i)=>{if(i)wl+=Math.hypot(q[0]-m.wallPts[i-1][0],q[1]-m.wallPts[i-1][1])});m.wallLen=wl;m.soil=m.bed*mh;m.stone=wl*wall*mh}else{m.flat=Math.PI*R*R;m.edge=TAU*R}
+    pack=(z,sf)=>linePack(cl,z.L0,z.L1,bw,sf);
+  }else{
+    const zs=polarZones(s),ex=s.k==='keyhole'?keyEx(s):null;m.ex=ex;
+    zs.forEach(z=>{if(ex){let c=0;for(let x=-R+.05;x<R;x+=.1)for(let y=-R+.05;y<R;y+=.1)if(inPolar(z,x,y)&&!ex(x,y,0))c++;z.area=c*.01}else z.area=(z.full?TAU:z.a1-z.a0)/2*(z.r1*z.r1-z.r0*z.r0)});
+    m.zones=zs;m.bed=zs.reduce((a,z)=>a+z.area,0);m.flat=m.bed;
+    if(s.k==='round')m.edge=TAU*R;
+    if(s.k==='ring'){m.path=Math.PI*s.ri*s.ri;m.edge=TAU*(R+s.ri)}
+    if(s.k==='keyhole'){m.path=s.sw*(R-s.ri);m.edge=TAU*R+2*(R-s.ri)+TAU*s.ri}
+    pack=(z,sf)=>polarPack(z,sf,ex);
+  }
+  m.zones.forEach((z,zi)=>{const zz=s.z[zi];z.pts=[];z.cp={};
+    if(zz.p!=null){const e=eff(zz.p);z.sp=spc(e);z.pts=pack(z,z.sp/12)}
+    let taken=z.pts.slice();
+    zz.q.forEach(q=>{const e=eff(q),sp=spc(e),big=sp>12,pk=pickComp(pack(z,sp/12),taken,z.area,sp,share,big);z.cp[q]={pts:pk,sp,big};taken=taken.concat(pk)});
+    z.lp=z.t==='l'?at(m.cl,(z.L0+z.L1)/2):z.full?(z.r0<=1e-9?[0,0]:[0,-(z.r0+z.r1)/2]):(()=>{const a=(z.a0+z.a1)/2,r=z.r0<=1e-9?z.r1*.58:(z.r0+z.r1)/2;return[r*Math.cos(a),r*Math.sin(a)]})();
+  });
+  return m;
+}
+function sectorD(cx,cy,r0,r1,a0,a1,full){
+  if(full){const c=r=>`M${cx-r} ${cy}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0Z`;return r0>1e-6?c(r1)+c(r0):c(r1)}
+  const pt=(r,a)=>`${(cx+r*Math.cos(a)).toFixed(2)} ${(cy+r*Math.sin(a)).toFixed(2)}`,lg=(a1-a0)>Math.PI?1:0;
+  return `M${pt(r1,a0)}A${r1} ${r1} 0 ${lg} 1 ${pt(r1,a1)}`+(r0>1e-6?`L${pt(r0,a1)}A${r0} ${r0} 0 ${lg} 0 ${pt(r0,a0)}Z`:`L${cx} ${cy}Z`);
+}
+const polyD=(pts,ox,oy,f)=>pts.map((q,i)=>`${i?'L':'M'}${(ox+q[0]*f).toFixed(1)} ${(oy+q[1]*f).toFixed(1)}`).join('');
+function locate(fx,fy){
+  for(let si=SH.length-1;si>=0;si--){const s=SH[si],m=SM[si];if(!m)continue;const x=fx-s.cx,y=fy-s.cy;if(Math.hypot(x,y)>s.r)continue;
+    if(m.cl){let best=1e9,bl=0;for(const q of m.cl.pts){const d=(q[0]-x)**2+(q[1]-y)**2;if(d<best){best=d;bl=q[2]}}
+      if(Math.sqrt(best)<=m.bw/2+.06)return{si,zi:Math.min(s.n-1,Math.floor(bl/m.cl.L*s.n))};return{si}}
+    const zi=m.zones.findIndex(z=>inPolar(z,x,y)&&!(m.ex&&m.ex(x,y,0)));return zi>=0?{si,zi}:{si}}
+  if(fx<0||fy<0||fx>=COLS||fy>=ROWS)return null;return{x:Math.floor(fx),y:Math.floor(fy)};
+}
+const covered=(x,y)=>SH.some(s=>Math.hypot(x+.5-s.cx,y+.5-s.cy)<s.r);
+
+/* ================= painting ================= */
+function paint(x,y){
+  const c=G[y]&&G[y][x];if(!c||covered(x,y))return;const t=tool(),pi=+$('#plant').value,qi=+$('#comp').value;
+  if(t==='bed')c.t=1;else if(t==='path'){c.t=2;c.p=null;c.q=[]}else if(t==='erase'){c.t=0;c.p=null;c.q=[]}
+  else if(t==='plant'){c.t=1;c.p=pi<0?null:pi}
+  else if(t==='comp'){c.t=1;if(qi<0)c.q=[];else if(!c.q.includes(qi)){c.q.push(qi);if(c.q.length>2)c.q.shift()}}
+}
+function paintZone(si,zi){
+  const z=SH[si]&&SH[si].z[zi];if(!z)return false;const t=tool(),pi=+$('#plant').value,qi=+$('#comp').value;
+  if(t==='plant')z.p=pi<0?null:pi;else if(t==='comp'){if(qi<0)z.q=[];else if(!z.q.includes(qi)){z.q.push(qi);if(z.q.length>2)z.q.shift()}}
+  else if(t==='erase'){z.p=null;z.q=[]}else return false;return true;
+}
+function applyAt(fx,fy,first){
+  const l=locate(fx,fy);if(!l)return;const key=l.zi!=null?`s${l.si}z${l.zi}`:l.x!=null?l.x+','+l.y:'s'+l.si;if(key===last&&!first)return;last=key;
+  if(l.zi!=null){if(paintZone(l.si,l.zi)){draw();if(SEL===l.si)insp()}}
+  else if(l.x!=null){paint(l.x,l.y);draw()}
+  else if(first&&(tool()==='bed'||tool()==='path'))live('Round structures are edited with the Select tool.');
+}
+const gw=$('#grid');
+function ptFt(e){const svg=gw.querySelector('svg');if(!svg)return[0,0];const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(svg.getScreenCTM().inverse());return[(q.x-GEO.ml)/GEO.ppf,(q.y-GEO.mt)/GEO.ppf]}
+const endStroke=()=>{if(down){down=false;commit()}last=''};
+gw.addEventListener('pointerdown',e=>{
+  if(e.button>0)return;const [fx,fy]=ptFt(e),t=tool();e.preventDefault();try{gw.setPointerCapture(e.pointerId)}catch(_){}
+  if(t==='select'){const el=document.elementFromPoint(e.clientX,e.clientY),h=el&&el.closest&&el.closest('[data-h]');
+    if(h){SEL=+h.dataset.s;DRAG={m:h.dataset.h,si:SEL}}
+    else{const l=locate(fx,fy);if(l&&l.si!=null){SEL=l.si;DRAG={m:'m',si:SEL,ox:fx-SH[SEL].cx,oy:fy-SH[SEL].cy}}else SEL=-1}
+    draw();insp();return}
+  down=true;applyAt(fx,fy,true);readout(fx,fy);
+});
+gw.addEventListener('pointermove',e=>{
+  const [fx,fy]=ptFt(e);
+  if(DRAG){const s=SH[DRAG.si];if(!s)return;
+    if(DRAG.m==='r'){const r=snapH(Math.hypot(fx-s.cx,fy-s.cy));if(r!==s.r){s.r=r;clampShape(s);draw()}}
+    else{const ox=DRAG.ox||0,oy=DRAG.oy||0,nx=snapH(fx-ox),ny=snapH(fy-oy);if(nx!==s.cx||ny!==s.cy){s.cx=nx;s.cy=ny;clampShape(s);draw()}}return}
+  if(down){if(e.pointerType==='mouse'&&!(e.buttons&1)){endStroke();return}applyAt(fx,fy)}
+  readout(fx,fy);
+});
+const endAll=()=>{if(DRAG){DRAG=null;commit();insp();draw()}endStroke()};
+['pointerup','pointercancel','lostpointercapture'].forEach(n=>gw.addEventListener(n,endAll));
+window.addEventListener('pointerup',endAll);window.addEventListener('blur',endAll);
+gw.addEventListener('pointerleave',()=>{if(!down&&!DRAG)readout(null)});
+function comps4(cs){const key=c=>c.y*100+c.x,map=new Map(cs.map(c=>[key(c),c])),seen=new Set(),out=[];
+  cs.forEach(c=>{if(seen.has(key(c)))return;const comp=[],st=[c];seen.add(key(c));while(st.length){const a=st.pop();comp.push(a);[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{const n=map.get((a.y+dy)*100+a.x+dx);if(n&&!seen.has(key(n))){seen.add(key(n));st.push(n)}})}out.push(comp)});return out}
+function lattice(cells,s){
+  const set=new Set(cells.map(c=>c.y*100+c.x)),ok=(cx,cy)=>{let n=0;for(const fy of [.15,.5,.85])for(const fx of [.15,.5,.85])if(set.has(Math.floor((cy-s/2+s*fy)/12)*100+Math.floor((cx-s/2+s*fx)/12)))n++;return n>=6},x0=Math.min(...cells.map(c=>c.x)),y0=Math.min(...cells.map(c=>c.y)),x1=Math.max(...cells.map(c=>c.x))+1,y1=Math.max(...cells.map(c=>c.y))+1,d=[];
+  for(let j=0;(y0*12+s/2+j*s)<y1*12;j++)for(let i=0;(x0*12+s/2+i*s)<x1*12;i++){const cx=x0*12+s/2+i*s,cy=y0*12+s/2+j*s;if(ok(cx,cy))d.push([cx,cy])}return d;
+}
+const pnames=(p,q)=>[p!=null?`<b>${esc(P[p].n)}</b>`:'',...q.map(i=>esc(P[i].n)+' (companion)')].filter(Boolean);
+function describe(l,html){
+  const strip=t=>html?t:t.replace(/<[^>]+>/g,'');
+  if(!l)return '';
+  if(l.si!=null){const s=SH[l.si],nm=KIND[s.k].name;if(l.zi==null)return strip(`${nm}: ${s.k==='keyhole'?'path notch or compost basket':s.k==='ring'?'center path':'stone wall'}`);
+    const z=s.z[l.zi],m=SM[l.si],zn=m&&m.zones[l.zi]?m.zones[l.zi].name:'Section '+(l.zi+1),ps=pnames(z.p,z.q);
+    return strip(`${nm}, ${zn.toLowerCase()}: ${ps.length?ps.join(' with '):'bare soil'}`)}
+  const c=G[l.y][l.x],pos=`Square ${l.x+1}, ${l.y+1}: `;if(covered(l.x,l.y))return strip(pos+'under a round structure');if(c.t===2)return strip(pos+'path');if(c.t===0)return strip(pos+'empty');
+  const ps=pnames(c.p,c.q);return strip(pos+(ps.length?ps.join(' with '):'bare bed'));
+}
+function readout(fx,fy){
+  const ro=$('#readout'),gh=gw.querySelector('#ghost');
+  if(HOVZ){HOVZ.classList.remove('hov','hovl');HOVZ=null}
+  if(fx==null){ro.innerHTML=DEFRO;if(gh)gh.setAttribute('visibility','hidden');return}
+  const l=locate(fx,fy);ro.innerHTML=l?describe(l,true):DEFRO;
+  if(gh){if(l&&l.x!=null&&!covered(l.x,l.y)&&tool()!=='select'){gh.setAttribute('x',l.x*GEO.ppf+1);gh.setAttribute('y',l.y*GEO.ppf+1);gh.setAttribute('visibility','visible')}else gh.setAttribute('visibility','hidden')}
+  if(l&&l.zi!=null){const el=gw.querySelector(`#z${l.si}-${l.zi}`);if(el){el.classList.add(el.dataset.l?'hovl':'hov');HOVZ=el}}
+}
+const DEFRO='Point at a square or section to see what\'s planted there.';
+
+/* ================= the plan drawing ================= */
+function draw(){
+  const cw=gw.clientWidth||800,ppf=Math.max(22,Math.min(64,Math.floor(760/Math.max(COLS,ROWS*.9)))),W=COLS*ppf,H=ROWS*ppf,k=ppf/12,sfg=$('#basis').value==='sfg',share=(+$('#share').value||25)/100,spc=p=>sfg?12/Math.sqrt(p.sfg):p.sp;
+  const sc=Math.max(1,Math.min(2.6,(W+50)/cw)),M={l:34*sc,t:40*sc,r:8,b:8},VW=W+M.l+M.r,VH=H+M.t+M.b,fs=12*sc;GEO={ppf,ml:M.l,mt:M.t};
+  gw.dataset.tool=tool();
+  $('#shv').textContent=Math.round(share*100);
+  SH.forEach(clampShape);
+  const cov=new Set();G.forEach((r,y)=>r.forEach((c,x)=>{if(covered(x,y))cov.add(y*100+x)}));
+  const cells=[];G.forEach((r,y)=>r.forEach((c,x)=>cells.push({x,y,t:c.t,p:c.p,q:c.q||[],cv:cov.has(y*100+x)})));
+  const live_=cells.filter(c=>!c.cv),bed=live_.filter(c=>c.t===1),path=live_.filter(c=>c.t===2),isBed=(x,y)=>{const n=G[y]&&G[y][x];return !!n&&n.t===1&&!cov.has(y*100+x)};
+  const used={},comps={};bed.forEach(c=>{if(c.p!=null)(used[c.p]=used[c.p]||[]).push(c);c.q.forEach(q=>(comps[q]=comps[q]||[]).push(c))});
+  let per=0,edges='',pedges='';
+  bed.forEach(c=>{const x0=c.x*ppf,y0=c.y*ppf;[[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{if(!isBed(c.x+dx,c.y+dy)){per++;edges+=dx===1?`M${x0+ppf} ${y0}v${ppf}`:dx===-1?`M${x0} ${y0}v${ppf}`:dy===1?`M${x0} ${y0+ppf}h${ppf}`:`M${x0} ${y0}h${ppf}`}});
+    [[1,0],[0,1]].forEach(([dx,dy])=>{if(isBed(c.x+dx,c.y+dy)&&G[c.y+dy][c.x+dx].p!==c.p&&(c.p!=null||G[c.y+dy][c.x+dx].p!=null))pedges+=dx?`M${x0+ppf} ${y0}v${ppf}`:`M${x0} ${y0+ppf}h${ppf}`})});
+  const info={},cinfo={},PTS={},CPTS={},q4=ppf/4;
+  const addI=(o,i,e,s,n,a,big)=>{const t=o[i]||(o[i]={p:e,s,n:0,a:0,big:false});t.n+=n;t.a+=a;if(big)t.big=true};
+  // grid main plants
+  Object.entries(used).forEach(([pi,cs])=>{const p=eff(+pi),s=spc(p),d=comps4(cs).flatMap(c=>lattice(c,s));addI(info,pi,p,s,d.length,cs.length);(PTS[pi]=PTS[pi]||[]).push(...d.map(q=>[q[0],q[1],s]))});
+  const pd=Object.values(PTS).flat(),cdots={};
+  Object.entries(comps).sort((a,b)=>a[0]-b[0]).forEach(([qi,cs])=>{const p=eff(+qi),s=spc(p),big=s>12;let pick=[];
+    if(big)pick=comps4(cs).flatMap(c=>lattice(c,s));
+    else{const nx=Math.max(1,Math.round(12/s)),n=Math.max(1,Math.min(nx*nx,Math.round(nx*nx*share)));
+      cs.forEach(c=>{const ck=c.y*100+c.x,cx=c.x*12+6,cy=c.y*12+6,cand=[];
+        for(let j=0;j<nx;j++)for(let i=0;i<nx;i++)cand.push([c.x*12+(i+.5)*12/nx,c.y*12+(j+.5)*12/nx]);
+        const near=pd.filter(o=>Math.abs(o[0]-cx)<=18&&Math.abs(o[1]-cy)<=18).concat(cdots[ck]||[]);
+        cand.map(d=>[d,near.length?Math.min(...near.map(o=>(o[0]-d[0])**2+(o[1]-d[1])**2)):-((d[0]-cx)**2+(d[1]-cy)**2)]).sort((a,b)=>b[1]-a[1]).slice(0,n).forEach(x=>{pick.push(x[0]);(cdots[ck]=cdots[ck]||[]).push(x[0])})})}
+    addI(cinfo,qi,p,s,pick.length,cs.length,big);(CPTS[qi]=CPTS[qi]||[]).push(...pick.map(q=>[q[0],q[1],s]))});
+  // round structures
+  SM=SH.map(s=>shapeModel(s,spc,share));
+  let shBed=0,shPath=0,shEdge=0,shFlat=0,shSoil=0,shStone=0;const zwarn=[];
+  SH.forEach((s,si)=>{const m=SM[si];shBed+=m.bed;shPath+=m.path;shEdge+=m.edge;shFlat+=m.flat;shSoil+=m.soil;shStone+=m.stone;
+    m.zones.forEach((z,zi)=>{const zz=s.z[zi],tag=`${KIND[s.k].name}, ${z.name.toLowerCase()}`;
+      if(zz.p!=null){const e=eff(zz.p);addI(info,zz.p,e,z.sp,z.pts.length,z.area);(PTS[zz.p]=PTS[zz.p]||[]).push(...z.pts.map(q=>[(s.cx+q[0])*12,(s.cy+q[1])*12,z.sp]));if(!z.pts.length)zwarn.push(`${tag}: ${e.n} doesn't fit. It needs about ${f0(z.sp)} in between plants; make the structure bigger or use fewer sections.`)}
+      Object.entries(z.cp).forEach(([q,o])=>{const e=eff(+q);addI(cinfo,q,e,o.sp,o.pts.length,z.area,o.big);(CPTS[q]=CPTS[q]||[]).push(...o.pts.map(p=>[(s.cx+p[0])*12,(s.cy+p[1])*12,o.sp]))})})});
+  const A=bed.length+shBed,Ap=path.length+shPath,PER=per+shEdge;
+  {const ids=[...new Set([...Object.keys(info),...Object.keys(cinfo)].map(Number))].sort((a,b)=>a-b);const before=ids.map(i=>HUEMAP[i]).join();assignHues(ids);if(ids.map(i=>HUEMAP[i]).join()!==before)setTimeout(()=>{palette('plant');palette('comp');sugg();brushStatus();if(SEL>=0)insp()},0)}
+
+  /* ---- render ---- */
+  const dim=i=>HL!=null&&+i!==HL;
+  let svg=`<svg viewBox="0 0 ${VW.toFixed(1)} ${VH.toFixed(1)}" role="img" aria-label="Garden plan, ${COLS} by ${ROWS} feet, north at top"><defs>
+    <pattern id="pg" width="${q4}" height="${q4}" patternUnits="userSpaceOnUse"><path d="M${q4} 0H0V${q4}" fill="none" style="stroke:var(--grid2)" stroke-width="1"/></pattern>
+    <pattern id="soil" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="2" cy="2.5" r="1" style="fill:var(--loam-dot)" opacity=".4"/><circle cx="6.5" cy="6.5" r=".7" style="fill:var(--loam-dot)" opacity=".3"/></pattern>
+    <pattern id="grav" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="3" r="1.6" style="fill:var(--gravel-dot)" opacity=".4"/><circle cx="7.5" cy="7.5" r="1.2" style="fill:var(--gravel-dot)" opacity=".35"/><circle cx="7.5" cy="2" r=".8" style="fill:var(--gravel-dot)" opacity=".3"/></pattern>
+    ${SH.map((s,si)=>`<clipPath id="cp${si}"><circle cx="${s.cx*ppf}" cy="${s.cy*ppf}" r="${s.r*ppf}"/></clipPath>`).join('')}</defs>`;
+  const dy=M.t-14*sc,dx=M.l-14*sc;let ticks='';
+  for(let i=0;i<=COLS;i++)ticks+=`M${M.l+i*ppf} ${dy-(i%COLS===0?6:3)*sc}v${(i%COLS===0?12:6)*sc}`;
+  for(let j=0;j<=ROWS;j++)ticks+=`M${dx-(j%ROWS===0?6:3)*sc} ${M.t+j*ppf}h${(j%ROWS===0?12:6)*sc}`;
+  svg+=`<g aria-hidden="true" style="stroke:var(--ink2)" stroke-width="${sc}"><path d="M${M.l} ${dy}h${W}M${dx} ${M.t}v${H}${ticks}"/></g>
+    <g aria-hidden="true" font-family="inherit" font-weight="700" style="fill:var(--ink)" font-size="${fs}">
+      <rect x="${M.l+W/2-2.1*fs}" y="${dy-.75*fs}" width="${4.2*fs}" height="${1.5*fs}" rx="4" style="fill:var(--sheet)"/><text x="${M.l+W/2}" y="${dy+.35*fs}" text-anchor="middle">${COLS} ft</text>
+      <g transform="translate(${dx} ${M.t+H/2}) rotate(-90)"><rect x="${-2.1*fs}" y="${-.75*fs}" width="${4.2*fs}" height="${1.5*fs}" rx="4" style="fill:var(--sheet)"/><text y="${.35*fs}" text-anchor="middle">${ROWS} ft</text></g>
+      <g transform="translate(${dx} ${dy}) scale(${sc})"><path d="M0 -10 L5 4 L0 1 L-5 4Z" style="fill:var(--mari);stroke:var(--ink)" stroke-width=".8"/><text y="-13" text-anchor="middle" font-size="9">N</text></g>
+    </g><g transform="translate(${M.l} ${M.t})"><rect width="${W}" height="${H}" fill="url(#pg)"/>`;
+  cells.forEach(c=>{const X=c.x*ppf,Y=c.y*ppf;let fill='transparent',pat='',op=1;
+    if(!c.cv){const h=c.p!=null?c.p:(c.q.length?c.q[0]:null);
+      if(c.t===1){if(h!=null){fill=`hsl(${hue(h)} var(--ps) ${c.p!=null?'var(--pl)':'var(--pl2)'})`;if(dim(h))op=.35}else{fill='var(--loam)';pat='soil'}}else if(c.t===2){fill='var(--gravel)';pat='grav'}}
+    svg+=`<rect data-x="${c.x}" data-y="${c.y}" x="${X}" y="${Y}" width="${ppf}" height="${ppf}" style="fill:${fill}"${op<1?` fill-opacity="${op}"`:''}/>`;
+    if(pat)svg+=`<rect x="${X}" y="${Y}" width="${ppf}" height="${ppf}" fill="url(#${pat})" pointer-events="none"/>`});
+  let gl='';for(let i=1;i<COLS;i++)gl+=`M${i*ppf} 0V${H}`;for(let j=1;j<ROWS;j++)gl+=`M0 ${j*ppf}H${W}`;
+  svg+=`<path d="${gl}" fill="none" style="stroke:var(--ink)" stroke-opacity=".11" stroke-width="1" pointer-events="none"/>`;
+  svg+=`<path d="${pedges}" fill="none" style="stroke:var(--ink)" stroke-opacity=".45" stroke-width="1.25" pointer-events="none"/>`;
+  svg+=`<path d="${edges}" fill="none" style="stroke:var(--ink)" stroke-width="2.25" stroke-linecap="square" pointer-events="none"/>`;
+  // structures
+  SH.forEach((s,si)=>{const m=SM[si],cx=s.cx*ppf,cy=s.cy*ppf,R=s.r*ppf;
+    svg+=`<g class="shp" data-s="${si}"><circle cx="${cx}" cy="${cy}" r="${R}" style="fill:${m.herb?'transparent':'var(--loam)'}"/>`;
+    if(!m.herb)svg+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#soil)" pointer-events="none"/>`;
+    m.zones.forEach((z,zi)=>{const zz=s.z[zi],h=zz.p!=null?zz.p:(zz.q.length?zz.q[0]:null),fill=h!=null?`hsl(${hue(h)} var(--ps) ${zz.p!=null?'var(--pl)':'var(--pl2)'})`:'var(--loam)',op=h!=null&&dim(h)?.35:1;
+      if(z.t==='p'){const d=sectorD(cx,cy,z.r0*ppf,z.r1*ppf,z.a0,z.a1,z.full);svg+=`<path id="z${si}-${zi}" class="zn" data-s="${si}" data-z="${zi}" d="${d}" fill-rule="evenodd" style="fill:${fill};stroke:var(--ink)" fill-opacity="${op}" stroke-opacity=".4" stroke-width="1.25"/>`;if(h==null)svg+=`<path d="${d}" fill-rule="evenodd" fill="url(#soil)" pointer-events="none"/>`}
+      else{const pts=m.cl.pts.filter(q=>q[2]>=z.L0-.02&&q[2]<=z.L1+.02);svg+=`<path id="z${si}-${zi}" class="zn" data-l="1" data-s="${si}" data-z="${zi}" d="${polyD(pts,cx,cy,ppf)}" fill="none" style="stroke:${fill}" stroke-opacity="${op}" stroke-width="${m.bw*ppf}" stroke-linecap="butt" stroke-linejoin="round" clip-path="url(#cp${si})"/>`}});
+    if(m.cl){const wd=polyD(m.wallPts,cx,cy,ppf);
+      if(m.herb)svg+=`<path d="${wd}" fill="none" style="stroke:var(--ink)" stroke-opacity=".55" stroke-width="${m.wall*ppf+2.5}" stroke-linecap="round" clip-path="url(#cp${si})" pointer-events="none"/><path d="${wd}" fill="none" style="stroke:var(--stone)" stroke-width="${m.wall*ppf}" stroke-linecap="round" clip-path="url(#cp${si})"/><path d="${wd}" fill="none" style="stroke:var(--stone-d)" stroke-width="${m.wall*ppf*.82}" stroke-dasharray="${(m.wall*ppf*.75).toFixed(1)} ${Math.max(2,ppf*.07).toFixed(1)}" stroke-linecap="butt" clip-path="url(#cp${si})" pointer-events="none"/><circle cx="${cx}" cy="${cy}" r="${m.p*.5*ppf}" style="fill:var(--stone);stroke:var(--ink)" stroke-opacity=".55" stroke-width="1.5" pointer-events="none"/>`;
+      else svg+=`<path d="${wd}" fill="none" style="stroke:var(--ink)" stroke-opacity=".35" stroke-width="1.25" stroke-dasharray="4 3" clip-path="url(#cp${si})" pointer-events="none"/>`}
+    if(s.k==='ring')svg+=`<circle cx="${cx}" cy="${cy}" r="${s.ri*ppf}" style="fill:var(--gravel);stroke:var(--ink)" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="${s.ri*ppf}" fill="url(#grav)" pointer-events="none"/>`;
+    if(s.k==='keyhole'){const L=(s.r-s.ri)*ppf+2,w=s.sw*ppf;svg+=`<g transform="translate(${cx} ${cy}) rotate(${s.rot})"><rect x="${s.ri*ppf-1}" y="${-w/2}" width="${L}" height="${w}" style="fill:var(--gravel)"/><rect x="${s.ri*ppf-1}" y="${-w/2}" width="${L}" height="${w}" fill="url(#grav)" pointer-events="none"/><path d="M${s.ri*ppf} ${-w/2}H${s.r*ppf}M${s.ri*ppf} ${w/2}H${s.r*ppf}" style="stroke:var(--ink)" stroke-width="2" pointer-events="none"/></g><circle cx="${cx}" cy="${cy}" r="${s.ri*ppf}" style="fill:var(--compost);stroke:var(--ink)" stroke-width="2"/><path d="M${cx-s.ri*ppf*.55} ${cy}h${s.ri*ppf*1.1}M${cx} ${cy-s.ri*ppf*.55}v${s.ri*ppf*1.1}" style="stroke:var(--loam)" stroke-opacity=".55" stroke-width="1.5" pointer-events="none"/>`}
+    svg+=m.herb?(SEL===si?'':`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" style="stroke:var(--ink)" stroke-opacity=".25" stroke-width="1" stroke-dasharray="2 4" pointer-events="none"/>`)+'</g>':`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" style="stroke:var(--ink)" stroke-width="2.25" pointer-events="none"/></g>`});
+  // spacing circles
+  const ringsFor=Object.keys(PTS).filter(i=>VIEW.rings||+i===HL);
+  ringsFor.forEach(i=>PTS[i].forEach(([x,y,s])=>{svg+=`<circle cx="${x*k}" cy="${y*k}" r="${s/2*k}" fill="none" style="stroke:hsl(${hue(i)} 50% var(--dl))" stroke-opacity=".55" stroke-dasharray="3 2" pointer-events="none"/>`}));
+  if(VIEW.dots)Object.entries(PTS).forEach(([i,pts])=>{let g=`<g pointer-events="none" style="fill:hsl(${hue(i)} 50% var(--dl))"${dim(i)?' opacity=".2"':''}>`;pts.forEach(([x,y,s])=>{const r=Math.min(Math.max(2.2,Math.min(5,ppf*.075)),s*k*.32);g+=`<circle cx="${(x*k).toFixed(1)}" cy="${(y*k).toFixed(1)}" r="${r.toFixed(1)}"/>`});svg+=g+'</g>'});
+  if(VIEW.comps)Object.entries(CPTS).forEach(([i,pts])=>{let g=`<g pointer-events="none" fill="hsl(${hue(i)} 65% 45%)" stroke="#fff" stroke-width="1"${dim(i)?' opacity=".2"':''}>`;pts.forEach(([x,y,s])=>{const r=Math.min(Math.max(2.6,Math.min(5.5,ppf*.085)),s*k*.4),X=x*k,Y=y*k;g+=`<polygon points="${X.toFixed(1)},${(Y-r).toFixed(1)} ${(X+r).toFixed(1)},${Y.toFixed(1)} ${X.toFixed(1)},${(Y+r).toFixed(1)} ${(X-r).toFixed(1)},${Y.toFixed(1)}"/>`});svg+=g+'</g>'});
+  // labels (largest block or section per plant, skipped when they would collide)
+  if(VIEW.labels){const fl=Math.max(11,Math.min(15,ppf/3.6))*Math.min(sc,1.8),placed=[],cand=[];
+    Object.entries(used).forEach(([pi,cs])=>{comps4(cs).forEach(cc=>{const xs=cc.map(c=>c.x),ys=cc.map(c=>c.y),bw=(Math.max(...xs)-Math.min(...xs)+1)*ppf,mx=cc.reduce((a,c)=>a+c.x,0)/cc.length+.5,my=cc.reduce((a,c)=>a+c.y,0)/cc.length+.5;cand.push({pi,x:mx*ppf,y:my*ppf,w:bw,n:cc.length})})});
+    SH.forEach((s,si)=>SM[si].zones.forEach((z,zi)=>{const p=s.z[zi].p;if(p!=null)cand.push({pi:p,x:(s.cx+z.lp[0])*ppf,y:(s.cy+z.lp[1])*ppf,w:z.t==='l'?ppf*2.6:Math.max(ppf*1.6,(z.full?TAU:(z.a1-z.a0))*((z.r0+z.r1)/2)*ppf*.9),n:z.area})}));
+    cand.sort((a,b)=>b.n-a.n);const done={};
+    cand.forEach(c=>{if(done[c.pi]>=2)return;const t=P[c.pi].n,w=t.length*fl*.56+12,h=fl+7;if(w>c.w*1.15)return;const b=[c.x-w/2,c.y-h/2,c.x+w/2,c.y+h/2];if(placed.some(q=>!(b[2]<q[0]||b[0]>q[2]||b[3]<q[1]||b[1]>q[3])))return;placed.push(b);done[c.pi]=(done[c.pi]||0)+1;
+      svg+=`<g pointer-events="none"${dim(c.pi)?' opacity=".3"':''}><rect x="${b[0].toFixed(1)}" y="${b[1].toFixed(1)}" width="${w.toFixed(1)}" height="${h}" rx="${h/2}" style="fill:var(--sheet);stroke:hsl(${hue(c.pi)} 45% var(--dl))" stroke-opacity=".5" fill-opacity=".93"/><text x="${c.x.toFixed(1)}" y="${(c.y+fl*.36).toFixed(1)}" text-anchor="middle" font-family="inherit" font-size="${fl.toFixed(1)}" font-weight="700" style="fill:var(--ink)">${esc(t)}</text></g>`})}
+  // selection handles
+  if(SEL>=0&&SH[SEL]){const s=SH[SEL],cx=s.cx*ppf,cy=s.cy*ppf,R=s.r*ppf,a=-Math.PI/4,hx=cx+R*Math.cos(a),hy=cy+R*Math.sin(a),hr=Math.max(7,ppf*.16);
+    svg+=`<circle cx="${cx}" cy="${cy}" r="${R+5}" fill="none" style="stroke:var(--mari)" stroke-width="2.5" stroke-dasharray="7 5" pointer-events="none"/>
+      <g data-s="${SEL}" data-h="m"><circle cx="${cx}" cy="${cy}" r="${hr}" style="fill:var(--sheet);stroke:var(--ink)" stroke-width="2"/><path d="M${cx-hr*.55} ${cy}h${hr*1.1}M${cx} ${cy-hr*.55}v${hr*1.1}" style="stroke:var(--ink)" stroke-width="1.8"/></g>
+      <g data-s="${SEL}" data-h="r"><circle cx="${hx}" cy="${hy}" r="${hr+6}" fill="transparent"/><circle cx="${hx}" cy="${hy}" r="${hr*.8}" style="fill:var(--mari);stroke:var(--ink)" stroke-width="2"/></g>
+      <g pointer-events="none" font-family="inherit" font-weight="700" font-size="${fs}"><rect x="${hx+hr+4}" y="${hy-fs*1.6}" width="${fs*4.4}" height="${fs*1.5}" rx="4" style="fill:var(--ink)"/><text x="${hx+hr+4+fs*2.2}" y="${hy-fs*.5}" text-anchor="middle" style="fill:var(--paper)">${f1(s.r*2)} ft</text></g>`}
+  svg+=`<rect id="ghost" width="${ppf-2}" height="${ppf-2}" rx="3" style="fill:var(--mari);stroke:var(--mari)" fill-opacity=".18" stroke-width="2.5" visibility="hidden" pointer-events="none"/>`;
+  if(FOC)svg+=`<rect x="${FOC.x*ppf+1.5}" y="${FOC.y*ppf+1.5}" width="${ppf-3}" height="${ppf-3}" fill="none" style="stroke:var(--mari)" stroke-width="3.5" pointer-events="none"/>`;
+  gw.innerHTML=svg+'</g></svg>';HOVZ=null;
+
+  // legend
+  const cnt=i=>(info[i]?info[i].n:0)+(cinfo[i]?cinfo[i].n:0),ids=[...new Set([...Object.keys(info),...Object.keys(cinfo)].map(Number))].sort((a,b)=>cnt(b)-cnt(a));
+  if(HL!=null&&!ids.includes(HL))HL=null;
+  $('#legend').innerHTML=`<span class="lgs"><i style="background:var(--loam)"></i>Bed</span><span class="lgs"><i style="background:var(--gravel)"></i>Path</span>${SH.some(s=>s.k==='spiral')?'<span class="lgs"><i style="background:var(--stone-d)"></i>Stone</span>':''}`+
+    ids.map(i=>`<button type="button" class="lgc" data-hl="${i}" aria-pressed="${HL===i}">${info[i]?sw(i):''}${cinfo[i]?sw(i,1):''}${esc(P[i].n)} <span class="c">${cnt(i)}</span></button>`).join('')+
+    `<span class="lgnote">${ids.length?(HL!=null?'Showing one plant. Choose it again to show all.':'Choose a plant to highlight it.'):''} Dots are plants, diamonds are companions.</span>`;
+
+  // tables + warnings
+  const all=[...Object.values(info),...Object.values(cinfo)],maxDm=Math.max(0,...all.map(q=>q.p.dm)),maxDi=Math.max(0,...all.map(q=>q.p.di)),dep=+$('#depth').value||12,warn=[...zwarn];
+  const flatAll=[...Object.entries(info).map(([i,q])=>[i,q,'Main']),...Object.entries(cinfo).map(([i,q])=>[i,q,q.big?'Companion (spaced as main)':'Companion'])];
+  const row=(i,q,role)=>{const p=q.p;if(q.n===0&&q.a>0&&role==='Main'&&used[i])warn.push(`${p.n}: no plant fits in the squares painted. It needs about ${f0(q.s)} in between plants; paint more squares.`);
+    return `<tr><td><b>${esc(p.n)}</b>${p.v?`<br><span class="sm">${esc(p.v)}</span>`:''}${p.adj?' <span class="adj">adjusted</span>':''}<br><button class="link" data-light="${esc(p.n)}">Light needs</button> <button class="link" data-lib="${i}">Plant details</button></td><td>${role}</td><td>${f1(q.a)}</td><td><b>${q.n}</b></td><td>${f0(q.s)} in</td><td>${p.lo}–${p.hi} in</td><td>${p.dm}–${p.di} in</td><td>${p.h} in</td><td>${p.s}+ h</td><td>${pill(p)}</td></tr>`};
+  $('#plants').innerHTML=all.length?`<div class="scroll"><table><thead><tr><th>Plant</th><th>Role</th><th>Sq ft</th><th>Plants that fit</th><th>Space apart</th><th>Range</th><th>Soil depth</th><th>Height</th><th>Sun</th><th>Pets</th></tr></thead><tbody>${flatAll.map(([i,q,r])=>row(i,q,r)).join('')}</tbody></table></div><p class="sm" style="margin-top:10px">Space apart is center to center. Sq ft includes sections of round structures. Each square or section with a companion gets at least one companion plant, with more where the ${Math.round(share*100)}% share allows, placed in the spots farthest from the main plants.</p>`:'<p class="mut">No plants yet. Go to step 2, pick a plant, and paint it onto a bed or a section of a round structure.</p>';
+  Object.values(cinfo).forEach(q=>{if(q.n===0)warn.push(`${q.p.n} (companion): none fit at a ${Math.round(share*100)}% share. Raise the share or paint more space.`)});
+  if(all.length&&dep<maxDm&&(bed.length||shFlat))warn.push(`Soil depth ${dep} in is below the ${maxDm} in minimum for ${[...new Set(all.filter(q=>q.p.dm>dep).map(q=>q.p.n))].join(', ')}.`);
+  const elev=(90-40.9+(+$('#sea').value))*Math.PI/180,seen={};
+  Object.entries(used).forEach(([pi,cs])=>{const A_=eff(+pi),L=Math.ceil((A_.h/12)/Math.tan(elev));cs.forEach(c=>{for(let j=1;j<=L;j++){const n=G[c.y+j]&&G[c.y+j][c.x];if(n&&n.t===1&&n.p!=null&&+n.p!==+pi&&!cov.has((c.y+j)*100+c.x)){const B=eff(n.p);if(B.h<A_.h*.6&&B.s>=5)seen[A_.n+'>'+B.n]=[A_,B,(A_.h/12)/Math.tan(elev)]}}})});
+  Object.values(seen).forEach(([a,b,l])=>warn.push(`Shade: ${a.n} (${a.h} in) can shade ${b.n}, which wants ${b.s}+ hours of sun, up to about ${f1(l)} ft south of it at noon. Move taller plants to the north edge.`));
+  const bad={};bed.forEach(c=>{if(c.p==null)return;[[1,0],[0,1]].forEach(([dx,dy])=>{const n=G[c.y+dy]&&G[c.y+dy][c.x+dx];if(n&&isBed(c.x+dx,c.y+dy)&&n.p!=null&&+n.p!==c.p){const a=P[c.p].n,b=P[n.p].n,r=PS[a+'|'+b];if(r&&r[0]<0)bad[[a,b].sort().join('|')]=`${REL[r[0]]}: ${a} next to ${b}. ${r[1]}`}})});
+  const ip={},iparea={};bed.forEach(c=>{if(c.p!=null)c.q.forEach(q=>{if(+q!==c.p){const key=c.p+'|'+q;ip[key]=(ip[key]||0)+1}})});
+  SH.forEach((s,si)=>{const m=SM[si],nm=KIND[s.k].name,zs=s.z,adjN=(i,j)=>{const a=zs[i].p,b=zs[j].p;if(a==null||b==null||a===b)return;const r=PS[P[a].n+'|'+P[b].n];if(r&&r[0]<0)bad[[P[a].n,P[b].n].sort().join('|')]=`${REL[r[0]]}: ${P[a].n} next to ${P[b].n} in the ${nm.toLowerCase()}. ${r[1]}`};
+    for(let i=0;i+1<s.n;i++)adjN(i,i+1);if(s.lay==='wedges'&&s.k!=='keyhole'&&s.n>2)adjN(s.n-1,0);
+    zs.forEach((z,zi)=>{if(z.p!=null)z.q.forEach(q=>{if(q!==z.p){const key=z.p+'|'+q;ip[key]=(ip[key]||0)+m.zones[zi].area}})});
+    if(s.lay==='rings'){for(let i=0;i<s.n;i++)for(let j=i+1;j<s.n;j++){const a=zs[i].p,b=zs[j].p;if(a==null||b==null)continue;const A_=eff(a),B=eff(b);if(B.h>A_.h*1.25&&A_.s>=5){warn.push(`${nm}: ${B.n} in ${m.zones[j].name.toLowerCase()} (${B.h} in) is taller than ${A_.n} in ${m.zones[i].name.toLowerCase()} (${A_.h} in). Put the tallest plants in the middle so they don't shade the rest.`);break}}}
+    if(s.k==='spiral'){for(let i=0;i<s.n;i++)for(let j=i+1;j<s.n;j++){const a=zs[i].p,b=zs[j].p;if(a==null||b==null)continue;const A_=eff(a),B=eff(b);if(B.s>A_.s){warn.push(`Herb spiral: ${B.n} wants more sun (${B.s}+ h) than ${A_.n} (${A_.s}+ h) but sits lower. The top is the sunniest, driest spot, so swap them.`)}}
+      if(zs.some(z=>z.p===idx['Mint']||z.q.includes(idx['Mint'])))warn.push('Herb spiral: mint spreads by runners. Plant it in a sunken pot near the bottom so it doesn\'t take over.')}
+  });
+  Object.values(bad).forEach(w=>warn.push(w));
+  SH.forEach((s,i)=>{SH.forEach((o,j)=>{if(j>i&&Math.hypot(s.cx-o.cx,s.cy-o.cy)<s.r+o.r-.01)warn.push(`Overlap: ${shName(i)} and ${shName(j)} overlap. Move one with the Select tool.`)});
+    const hid=cells.filter(c=>c.cv&&c.t!==0&&Math.hypot(c.x+.5-s.cx,c.y+.5-s.cy)<s.r).length;if(hid)warn.push(`Overlap: ${shName(i)} sits on ${plural(hid,'painted square')}. ${hid===1?'It is':'They are'} left out of the totals.`)});
+  const irows=Object.entries(ip).map(([key,n])=>{const [pi,qi]=key.split('|'),a=eff(+pi),b=eff(+qi),r=PS[a.n+'|'+b.n];if(r&&r[0]<0)warn.push(`${REL[r[0]]}: ${b.n} planted with ${a.n}. ${r[1]}`);
+    const fit=`${b.h<=a.h*.8?'Fits under':'Similar height'}; ${b.s<=a.s?'light OK':'needs more sun than '+a.n}`;
+    return `<tr><td><b>${esc(a.n)}</b> + <b>${esc(b.n)}</b></td><td>${f1(n)}</td><td>${r?REL[r[0]]:'No data yet'}</td><td>${r?EVN[r[2]]:'–'}</td><td>${esc(r?r[1]:'')}</td><td>${fit}</td></tr>`});
+  $('#inter').innerHTML=irows.length?`<div class="scroll"><table><thead><tr><th>Pair</th><th>Sq ft</th><th>Relationship</th><th>Evidence</th><th>Why</th><th>Fit</th></tr></thead><tbody>${irows.join('')}</tbody></table></div>`:'<p class="mut">No companions yet. In step 3, pick a companion and paint it over squares or sections that already have a main plant.</p>';
+  {const pf={T:'toxic',C:'caution',V:'not yet verified'},pl=[...new Map(all.filter(q=>q.p.pet!=='S').map(q=>[q.p.n,`${q.p.n} (${pf[q.p.pet]})`])).values()];if(pl.length)warn.push(`Pets: ${pl.join(', ')}. Check the ASPCA list before planting where pets roam.`)}
+  if(all.length)warn.push(`Soil: these crops need at least ${maxDm} in of soil; ${maxDi} in is ideal.`);
+  const isW=w=>/^(Overlap|Shade|Caution|Avoid|Pets|Herb spiral|Round bed|Ring bed|Keyhole bed|Soil depth|\w[\w ]*: no plant|\w[\w ]*\(companion\))/.test(w)||/doesn't fit/.test(w);
+  warn.sort((a,b)=>isW(b)-isW(a));
+  $('#warn').innerHTML=warn.length?warn.map(w=>`<p class="n${isW(w)?' w2':''}">${esc(w)}</p>`).join(''):'<p class="allgood">Nothing to check yet. Warnings about spacing, shade, neighbors, pets, and soil depth show up here as you plant.</p>';
+  $('#chk-n').textContent=warn.filter(isW).length;
+  PC={};all.forEach(q=>PC[q.p.n]=(PC[q.p.n]||0)+q.n);
+  cal(all);materials(A,Ap,PER,dep,{flat:bed.length+shFlat,soil:shSoil,stone:shStone});
+  const nPl=Object.values(PC).reduce((a,b)=>a+b,0);
+  $('#kpi').innerHTML=[[f0(A),'sq ft planted'],[f0(Ap),'sq ft of path'],[f0(PER),'ft of edging'],[nPl,'plants'],[(LAST.vs/27).toFixed(2),'cu yd of soil'],[f0(LAST.water),'gal of water a week']].map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('')+`<div class="stat"><b id="kcost">${COSTTOT==null?'–':'$'+f0(COSTTOT)}</b><span>est. cost</span></div>`;
+  stepStatus(A,Ap,Object.keys(info).length,Object.keys(cinfo).length);
+  ctxOptions(used);shList();
+}
+$('#legend').addEventListener('click',e=>{const b=e.target.closest('[data-hl]');if(!b)return;const i=+b.dataset.hl;HL=HL===i?null:i;draw();const nb=$(`#legend [data-hl="${i}"]`);if(nb)nb.focus();live(HL==null?'Showing all plants.':`Highlighting ${P[i].n}.`)});
+$$('[data-view]').forEach(c=>{c.checked=!!VIEW[c.dataset.view];c.onchange=()=>{VIEW[c.dataset.view]=c.checked;LS.set('gbd:view',VIEW);draw()}});
+let RZ;addEventListener('resize',()=>{clearTimeout(RZ);RZ=setTimeout(draw,150)});
+
+/* ================= round structure editor ================= */
+const KICON={round:'<circle cx="17" cy="17" r="14"/><circle cx="17" cy="17" r="7"/>',ring:'<circle cx="17" cy="17" r="14"/><circle cx="17" cy="17" r="5" stroke-dasharray="2 2"/><path d="M17 3v9M17 22v9M3 17h9M22 17h9"/>',keyhole:'<path d="M14 30.7A14 14 0 1 1 20 30.7V21h-6z"/><circle cx="17" cy="17" r="4" fill="currentColor" fill-opacity=".35"/>',spiral:'<path d="M17 17c0-2 2-3 3.5-2s2 4-.5 5.5-6.5.5-7.5-3 1.5-8 6-8.5 9.5 3 9.5 7.5-3.5 10-9 10.5S3.5 24 4 17" stroke-linecap="round"/>'};
+const kicon=k=>`<svg class="k" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">${KICON[k]}</svg>`;
+const shName=si=>{const s=SH[si],same=SH.filter(o=>o.k===s.k);return KIND[s.k].name+(same.length>1?' '+(same.indexOf(s)+1):'')};
+function findSpot(r){
+  const fits=(cx,cy)=>{if(SH.some(o=>Math.hypot(o.cx-cx,o.cy-cy)<o.r+r))return false;for(let y=Math.floor(cy-r);y<Math.ceil(cy+r);y++)for(let x=Math.floor(cx-r);x<Math.ceil(cx+r);x++){if(Math.hypot(x+.5-cx,y+.5-cy)<r&&G[y]&&G[y][x]&&G[y][x].t!==0)return false}return true};
+  for(let cy=r;cy<=ROWS-r;cy+=.5)for(let cx=r;cx<=COLS-r;cx+=.5)if(fits(cx,cy))return[cx,cy];return null;
+}
+function addShape(k){
+  const r=KIND[k].r,need=Math.ceil(2*r),grow=(c,r_)=>{COLS=c;ROWS=r_;G=mk(COLS,ROWS);$('#cols').value=COLS;$('#rows').value=ROWS};let spot=findSpot(r),grew=false;
+  if(!spot){const wide=COLS>=ROWS*1.4;
+    if(!wide&&COLS+need<=24){grow(COLS+need,Math.max(ROWS,need));grew=true}else if(ROWS+need<=24){grow(Math.max(COLS,need),ROWS+need);grew=true}else if(COLS+need<=24){grow(COLS+need,Math.max(ROWS,need));grew=true}
+    spot=findSpot(r)}
+  const s=newShape(k,spot?spot[0]:COLS/2,spot?spot[1]:ROWS/2);SH.push(s);SEL=SH.length-1;setTool('select');draw();commit();insp();
+  live(`${KIND[k].name} added${grew?`; the grid grew to ${COLS} by ${ROWS} ft to make room`:''}${spot?'':'. There was no free space, so it overlaps other beds'}. Drag it to move it, drag the orange dot to resize it, and set its sections in the panel.`);
+}
+$$('[data-add]').forEach(b=>b.onclick=()=>addShape(b.dataset.add));
+function shList(){
+  const h=$('#shlist');if(!SH.length){h.innerHTML='';return}
+  h.innerHTML=`<p class="sm" style="margin:0 0 6px">In your plan:</p><div class="chips">${SH.map((s,si)=>`<button type="button" class="chip" data-sel="${si}" aria-pressed="${SEL===si}">${esc(shName(si))}</button>`).join('')}</div>`;
+}
+$('#shlist').addEventListener('click',e=>{const b=e.target.closest('[data-sel]');if(!b)return;SEL=+b.dataset.sel;setTool('select');draw();insp();const f=$('#insp [data-f]');if(f)f.focus()});
+const plantOpts=(sel)=>`<option value="-1">None</option>`+['Vegetable','Fruit','Herb','Flower'].map(t=>`<optgroup label="${t}">${P.map((p,i)=>p.ty===t?`<option value="${i}"${i===sel?' selected':''}>${esc(p.n)}</option>`:'').join('')}</optgroup>`).join('');
+function insp(){
+  const box=$('#insp');shList();
+  if(SEL<0||!SH[SEL]){box.hidden=true;box.innerHTML='';return}
+  const s=SH[SEL],m=SM[SEL]||shapeModel(s,p=>p.sp,.25),act=document.activeElement,fk=act&&box.contains(act)?(act.dataset.f?'[data-f="'+act.dataset.f+'"]':act.dataset.zp?'[data-zp="'+act.dataset.zp+'"]':act.dataset.zq?'[data-zq="'+act.dataset.zq+'"]':act.id?'#'+act.id:null):null;
+  const mx=Math.min(COLS,ROWS),nmax=maxN(s),herb=s.k==='spiral';
+  const f=[`<label>Diameter (ft)<input type="number" data-f="d" min="3" max="${Math.min(20,mx)}" step="1" value="${s.r*2}"></label>`];
+  if(KIND[s.k].lays)f.push(`<label>Layout<select data-f="lay">${KIND[s.k].lays.map(l=>`<option value="${l}"${s.lay===l?' selected':''}>${LAYN[l]}</option>`).join('')}</select></label>`);
+  f.push(`<label>Sections<input type="number" data-f="n" min="${s.lay==='wedges'?2:1}" max="${nmax}" value="${s.n}"></label>`);
+  if(s.k==='ring')f.push(`<label>Center path diameter (ft)<input type="number" data-f="ri" min="1" max="${s.r*2-2}" step="1" value="${s.ri*2}"></label>`);
+  if(s.k==='keyhole'){f.push(`<label>Compost basket diameter (ft)<input type="number" data-f="ri" min="1" max="${s.r*2-2.5}" step=".5" value="${s.ri*2}"></label>`);f.push(`<label>Notch width (ft)<input type="number" data-f="sw" min="1" max="2.5" step=".5" value="${s.sw}"></label>`)}
+  if(herb)f.push(`<label>Height at center (ft)<input type="number" data-f="hgt" min="1" max="4" step=".5" value="${s.hgt}"></label>`);
+  if(s.k==='keyhole'||herb)f.push(`<label>${herb?'Low end faces':'Notch faces'}<select data-f="rot">${ROTS.map(([v,l])=>`<option value="${v}"${s.rot===v?' selected':''}>${l}</option>`).join('')}</select></label>`);
+  f.push(`<label>Center, from left (ft)<input type="number" data-f="cx" min="${s.r}" max="${COLS-s.r}" step=".5" value="${s.cx}"></label><label>Center, from top (ft)<input type="number" data-f="cy" min="${s.r}" max="${ROWS-s.r}" step=".5" value="${s.cy}"></label>`);
+  const HINT=herb?{Top:'Driest and sunniest. Good for rosemary, thyme, sage, lavender, and oregano.','Upper middle':'Sunny and fairly dry. Thyme, oregano, and sage do well.',Middle:'In between. Chives, basil, and dill work here.','Lower middle':'Moister and cooler. Chives, cilantro, and parsley.',Bottom:'Moist and cooler. Parsley, cilantro, and chives; mint in a sunken pot.'}:{};
+  const zl=m.zones.map((z,zi)=>{const zz=s.z[zi],np=z.pts?z.pts.length:0;return `<li><div class="zh">${zz.p!=null?sw(zz.p):'<span class="dot0" aria-hidden="true"></span>'}<b>${esc(z.name)}</b><span class="sm">${f1(z.area)} sq ft${zz.p!=null?`, ${plural(np,'plant')}`:''}</span></div>
+    <div class="fields"><label>Main plant<select data-zp="${zi}" aria-label="Main plant for ${esc(z.name)}">${plantOpts(zz.p==null?-1:zz.p)}</select></label><label>Companion<select data-zq="${zi}" aria-label="Companion for ${esc(z.name)}">${plantOpts(zz.q.length?zz.q[zz.q.length-1]:-1)}</select></label></div>${HINT[z.name]?`<p class="zhint">${HINT[z.name]}</p>`:''}</li>`}).join('');
+  const mat=herb?`About ${f1(m.soil*(1+(+$('#settle').value||0)/100))} cu ft of soil and ${f1(m.stone/27*K.dens.gravel/2000)} tons of stone for the walls.`:s.k==='keyhole'?'The center basket takes kitchen scraps and compost; water it there and nutrients soak outward.':s.k==='ring'?'The center counts as path, so it gets gravel or mulch in the materials list.':`${f1(m.edge)} ft of flexible edging around the outside.`;
+  box.innerHTML=`<div class="insp-head">${kicon(s.k)}<h3>${esc(shName(SEL))}</h3><button type="button" class="icon-btn" id="insp-x" aria-label="Done editing ${esc(shName(SEL))}"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+    <p class="sm" style="margin:0">${f1(m.bed)} sq ft of planting space. ${mat}</p>
+    <div class="fields">${f.join('')}</div>
+    <h4 class="sh">Sections</h4>
+    <p class="sm" style="margin:0">Pick plants here, or choose a plant brush and click a section on the grid.</p>
+    <ol class="zl">${zl}</ol>
+    <div class="btns" style="margin-top:12px">${herb?'<button type="button" class="btn ghost small" id="herbmix">Plant the classic herb mix</button>':''}<button type="button" class="btn ghost small" id="sh-clear">Clear plants</button><button type="button" class="btn ghost small" id="sh-del">Remove structure</button></div>`;
+  box.hidden=false;
+  if(fk){const el=box.querySelector(fk);if(el)el.focus()}
+}
+$('#insp').addEventListener('change',e=>{
+  const s=SH[SEL];if(!s)return;const t=e.target,v=t.value;
+  if(t.dataset.f){const f=t.dataset.f,n=+v;
+    if(f==='d')s.r=snapH(n/2);else if(f==='lay'){s.lay=v;if(v==='wedges'&&s.n<2)s.n=4}else if(f==='n')s.n=n;else if(f==='ri')s.ri=n/2;else if(f==='sw')s.sw=n;else if(f==='hgt')s.hgt=n;else if(f==='rot')s.rot=n;else if(f==='cx')s.cx=n;else if(f==='cy')s.cy=n;}
+  else if(t.dataset.zp!=null){s.z[+t.dataset.zp].p=+v<0?null:+v}
+  else if(t.dataset.zq!=null){const z=s.z[+t.dataset.zq];z.q=+v<0?[]:[+v]}
+  else return;
+  clampShape(s);draw();commit();insp();
+});
+$('#insp').addEventListener('click',e=>{
+  const id=e.target.closest('button')&&e.target.closest('button').id;if(!id)return;const s=SH[SEL];
+  if(id==='insp-x'){SEL=-1;draw();insp();gw.focus();return}
+  if(id==='sh-del'){const nm=shName(SEL);SH.splice(SEL,1);SEL=-1;draw();commit();insp();live(`${nm} removed. Press Ctrl+Z to undo.`);return}
+  if(id==='sh-clear'){s.z.forEach(z=>{z.p=null;z.q=[]});draw();commit();insp();return}
+  if(id==='herbmix'){(HERBMIX[s.n]||[]).forEach((n,i)=>{if(idx[n]!=null){s.z[i].p=idx[n];s.z[i].q=[]}});draw();commit();insp();live('Planted the classic herb mix, from rosemary at the top to parsley at the bottom.')}
+});
+
+/* ================= guided steps ================= */
+function stepStatus(A,Ap,nm,nc){
+  const s=[[A>0,A?`${f0(A)} sq ft${SH.length?`, ${plural(SH.length,'round structure')}`:Ap?`, ${f0(Ap)} of path`:''}`:'Paint where the bed goes'],[nm>0,nm?`${plural(nm,'plant')} placed`:'Pick a plant and paint it in'],[nc>0,nc?`${plural(nc,'companion')} added`:'Optional: tuck in companions'],[false,A?`${(LAST.vs/27).toFixed(2)} cu yd of soil`:'Soil, mulch, paths, water']];
+  s.forEach(([d,t],i)=>{$('#ss'+(i+1)).textContent=t;$(`.step[data-step="${i+1}"]`).classList.toggle('done',d)});
+}
+function goStep(n,focus){
+  STEP=n;$$('.step').forEach(b=>{if(+b.dataset.step===n)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current')});
+  $$('.panel').forEach(p=>p.hidden=p.id!=='step-'+n);
+  const t=tool();
+  if(n===1&&(t==='plant'||t==='comp'))setTool('bed');
+  if(n===2){if(+$('#plant').value<0)setPlant(idx['Tomato'],true);setTool('plant')}
+  if(n===3)setTool('comp');
+  brushStatus();
+  if(focus){const h=$('#s'+n+'h');if(h){h.focus({preventScroll:true});if(innerWidth<1080)$('#step-'+n).scrollIntoView({block:'start',behavior:'smooth'})}}
+}
+$$('.step').forEach(b=>b.onclick=()=>goStep(+b.dataset.step,true));
+$$('[data-go]').forEach(b=>b.onclick=()=>goStep(+b.dataset.go,true));
+$('#toplan').onclick=()=>{$('#report').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});$('#rep-h').focus({preventScroll:true})};
+function brushStatus(){
+  const t=tool(),pi=+$('#plant').value,qi=+$('#comp').value;gw.dataset.tool=t;
+  $('#bl-plant').textContent=pi<0?'Plant':P[pi].n;$('#bs-plant').style.setProperty('--h',pi<0?90:hue(pi));
+  $('#bl-comp').textContent=qi<0?'No companion':P[qi].n;$('#bs-comp').style.setProperty('--h',qi<0?0:hue(qi));$('#bs-comp').style.visibility=qi<0?'hidden':'visible';
+  const msg={select:'<b>Select.</b> Click a round structure to edit it, drag to move it, or drag the orange dot to resize it.',bed:'<b>Bed brush.</b> Click or drag over squares to add planting area.',path:'<b>Path brush.</b> Paths get gravel or mulch in the materials list.',erase:'<b>Erase.</b> Clears squares, or the plants in a section of a round structure.',
+    plant:pi<0?'<b>Bare bed brush.</b> Pick a plant in step 2 to paint it.':`<b>Painting ${esc(P[pi].n)}</b> as a main plant. Drag across squares or click a section of a round structure.`,
+    comp:qi<0?'<b>Removing companions</b> from the squares and sections you paint.':`<b>Painting ${esc(P[qi].n)}</b> as a companion. Paint over squares or sections that already have a main plant.`}[t];
+  $('#brush-now').innerHTML=msg;
+}
+$$('input[name=tool]').forEach(r=>r.addEventListener('change',()=>{brushStatus();live($('#brush-now').textContent)}));
+
+/* ================= plant finder ================= */
+const TYPES=[['all','All'],['Vegetable','Vegetables'],['Herb','Herbs'],['Flower','Flowers'],['Fruit','Fruit']];
+const PF={plant:{q:'',ty:'all',safe:false},comp:{q:'',ty:'all',safe:false}};
+$$('.seg').forEach(g=>{const m=g.dataset.mode;g.innerHTML=TYPES.map(([v,l])=>`<button type="button" data-ty="${v}" aria-pressed="${v==='all'}">${l}</button>`).join('');
+  g.addEventListener('click',e=>{const b=e.target.closest('[data-ty]');if(!b)return;g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));if(m==='lib'){LIB.ty=b.dataset.ty;renderLib()}else{PF[m].ty=b.dataset.ty;palette(m)}})});
+['plant','comp'].forEach(m=>{$('#q-'+m).addEventListener('input',e=>{PF[m].q=e.target.value.trim().toLowerCase();palette(m)});$('#safe-'+m).addEventListener('change',e=>{PF[m].safe=e.target.checked;palette(m)})});
+function palette(m,refocus){
+  const f=PF[m],cur=+$('#'+m).value,host=$('#pal-'+m);
+  const list=P.map((p,i)=>[eff(i),i]).filter(([p])=>(f.ty==='all'||p.ty===f.ty)&&(!f.safe||p.pet==='S')&&(!f.q||p.n.toLowerCase().includes(f.q)));
+  host.innerHTML=list.length?list.map(([p,i])=>`<button type="button" class="pi${i===cur?' on':''}" data-i="${i}" aria-pressed="${i===cur}">${sw(i,m==='comp')}<span class="pn">${esc(p.n)}${p.v?` <span class="sm">${esc(p.v)}</span>`:''}</span><span class="pm">${p.sp} in apart, ${p.s}+ h sun${p.adj?', adjusted':''}</span>${pill(p)}</button>`).join(''):'<p class="sm" style="padding:10px">No plants match. Clear the search or the filters.</p>';
+  if(refocus!=null){const b=host.querySelector(`[data-i="${refocus}"]`);if(b)b.focus()}
+}
+$('#pal-plant').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b)setPlant(+b.dataset.i)});
+$('#pal-comp').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b)setComp(+b.dataset.i)});
+function setPlant(i,quiet){
+  $('#plant').value=i;if(!quiet)setTool('plant');
+  const b=document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#pal-plant [data-i]');
+  palette('plant',b?i:null);facts();$('#vfilter').value='';varList();adjFields();
+  if(i>=0)$('#ctx').value=i;sugg();brushStatus();
+  if(!quiet&&i>=0)live(`${P[i].n} selected. Paint it onto a bed or click a section.`);
+}
+function setComp(i){
+  $('#comp').value=i;setTool('comp');
+  const b=document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#pal-comp [data-i]');
+  palette('comp',b?i:null);sugg();brushStatus();live(i<0?'Remove-companions brush selected.':`${P[i].n} selected as a companion. Paint it over main plants.`);
+}
+$('#nocomp').onclick=()=>setComp(-1);
+function thumb(i,cls){const p=P[i],ph=photo(p.n);return `<span class="${cls||'thumb'}" style="--h:${hue(i)}"><span class="ini" aria-hidden="true">${esc(p.n[0])}</span>${ph?`<img src="${esc(ph.src)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''}</span>`}
+function facts(){
+  const pi=+$('#plant').value,box=$('#facts');
+  if(pi<0){box.innerHTML='<p class="sm">Pick a plant from the list to see its spacing, height, and planting window.</p>';return}
+  const p=eff(pi),a=k=>isAdj(pi,k)?' <span class="adj">adjusted</span>':'';
+  box.innerHTML=`<div class="fh">${thumb(pi)}<div><h3>${esc(P[pi].n)}</h3><p class="sm">${esc(p.ty)}${p.v?`, ${esc(p.v)}`:''}</p></div>${pill(p)}</div>
+  <dl class="facts"><div><dt>Space apart</dt><dd>${p.sp} in${a('sp')||` <span class="sm">(${p.lo}–${p.hi})</span>`}</dd></div><div><dt>Height</dt><dd>${p.h} in${a('h')}</dd></div><div><dt>Sun</dt><dd>${p.s}+ hours${a('s')}</dd></div><div><dt>Soil depth</dt><dd>${p.dm}–${p.di} in${a('dm')}</dd></div></dl>
+  <p class="win"><b>Plant outdoors:</b> ${esc(p.win)}</p><p class="sm" style="margin:0">${esc(p.pn)} <button class="link" data-lib="${pi}">More about ${esc(P[pi].n.toLowerCase())}</button></p>`;
+}
+function adjFields(){
+  const pi=+$('#plant').value,box=$('#adj-f');$('#adjust').hidden=pi<0;if(pi<0)return;
+  const b=effV(pi),e=eff(pi);$$('.adjname').forEach(x=>x.textContent=P[pi].n.toLowerCase());
+  box.innerHTML=OVK.map(([k,l,u,mn,mx,st])=>`<label>${l} (${u})<input type="number" data-ov="${k}" min="${mn}" max="${mx}" step="${st}" value="${e[k]!=null?e[k]:''}"${b[k]==null&&e[k]==null?' placeholder="Not recorded"':''}><span class="hint">${isAdj(pi,k)?'<span class="adj">adjusted</span> ':''}Default ${b[k]!=null?b[k]:'not recorded'}</span></label>`).join('');
+  $('#adj-reset').disabled=!(OV[pi]&&Object.keys(OV[pi]).length);
+}
+function setOv(pi,k,v){const b=effV(pi);OV[pi]=OV[pi]||{};if(v===''||v==null||isNaN(+v)||+v===b[k])delete OV[pi][k];else OV[pi][k]=+v;if(!Object.keys(OV[pi]).length)delete OV[pi];LS.set('gbd:ov',ovOut())}
+const ovOut=()=>Object.fromEntries(Object.entries(OV).map(([i,o])=>[P[i].n,o]));
+const ovIn=o=>{OV={};Object.entries(o||{}).forEach(([n,v])=>{const i=idx[n];if(i==null||!v||typeof v!=='object')return;const c={};OVK.forEach(([k,,, mn,mx])=>{if(v[k]!=null&&isFinite(+v[k]))c[k]=Math.max(mn,Math.min(mx,+v[k]))});if(Object.keys(c).length)OV[i]=c})};
+function needsChanged(pi,msg){draw();facts();adjFields();palette('plant');palette('comp');sugg();if(SEL>=0)insp();if(!$('#t-2').hidden)light();if(msg)live(msg)}
+$('#adj-f').addEventListener('change',e=>{const k=e.target.dataset.ov;if(!k)return;const pi=+$('#plant').value;setOv(pi,k,e.target.value);needsChanged(pi,`${P[pi].n} updated everywhere in your plan.`);const el=$(`#adj-f [data-ov="${k}"]`);if(el)el.focus()});
+$('#adj-reset').onclick=()=>{const pi=+$('#plant').value;delete OV[pi];LS.set('gbd:ov',ovOut());needsChanged(pi,`${P[pi].n} is back to its default needs.`)};
+
+/* ================= companions ================= */
+function ctxOptions(used){
+  const ids=[...new Set([...Object.keys(used).map(Number),...SH.flatMap(s=>s.z.map(z=>z.p).filter(p=>p!=null))])],sig=ids.join(',');if(sig===CTXSIG)return;CTXSIG=sig;
+  const sel=$('#ctx'),cur=sel.value,opt=i=>`<option value="${i}">${esc(P[i].n)}</option>`;
+  sel.innerHTML=(ids.length?`<optgroup label="In your plan">${ids.map(opt).join('')}</optgroup>`:'')+`<optgroup label="${ids.length?'Other plants':'All plants'}">${P.map((p,i)=>ids.includes(i)?'':opt(i)).join('')}</optgroup>`;
+  const pi=+$('#plant').value;sel.value=cur!==''&&sel.querySelector(`option[value="${cur}"]`)?cur:(ids.includes(pi)?pi:(ids[0]!=null?ids[0]:Math.max(0,pi)));
+  sugg();
+}
+$('#ctx').onchange=sugg;
+function sugg(){
+  const box=$('#sugg'),ci=+$('#ctx').value,qi=+$('#comp').value;
+  if(isNaN(ci)||ci<0||!P[ci]){box.innerHTML='';return}
+  const p=eff(ci),all=CMP[p.n]||[],good=all.filter(x=>x.s>0).sort((a,b)=>b.s*WT[b.e]-a.s*WT[a.e]).slice(0,8),bad=all.filter(x=>x.s<0).sort((a,b)=>a.s-b.s);
+  box.innerHTML=(good.length?`<ul class="sugg" aria-label="Good companions for ${esc(p.n)}">${good.map(x=>{const bi=idx[x.n],b=eff(bi);return `<li><button type="button" class="sg${bi===qi?' on':''}" data-q="${bi}" aria-pressed="${bi===qi}">${sw(bi,1)}<span><b>${esc(x.n)}</b> <span class="ev">${x.s>1?'Strong pair, ':''}${EVN[x.e].toLowerCase()}</span></span>${pill(b)}<span class="why">${esc(x.m)}. ${b.h<=p.h*.8?'Fits under it':'Similar height'}; ${b.s<=p.s?'light is fine':'needs more sun'}.</span></button></li>`}).join('')}</ul>`:`<p class="sm" style="margin-top:10px">No companion data yet for ${esc(p.n)}. Browse every plant below.</p>`)+
+    (bad.length?`<div class="apart"><b>Keep apart from ${esc(p.n)}</b><ul>${bad.slice(0,5).map(x=>`<li>${esc(x.n)} (${REL[x.s].toLowerCase()}): ${esc(x.m)}</li>`).join('')}</ul></div>`:'');
+}
+$('#sugg').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b)return;const i=+b.dataset.q;setComp(i);const nb=$(`#sugg [data-q="${i}"]`);if(nb)nb.focus()});
+
+/* ================= materials ================= */
+function materials(A,Ap,per,dep,X){
+  const m=K.mix[+$('#mix').value],st=(+$('#settle').value||0)/100,mulD=+$('#mulch').value||0,pm=$('#pathmat').value,pd=+$('#pathd').value||0,bd=+$('#base').value||0,wk=+$('#wk').value||1,bS=+$('#bagS').value||1.5,bM=+$('#bagM').value||2,dn=K.dens;
+  if(!A&&!Ap){LAST={q:{},per:0,fabric:0,vs:0,water:0};$('#mat').innerHTML='<p class="mut">Paint some bed or path squares, or add a round structure, to see quantities.</p>';cost();return}
+  const vs=(X.flat*dep/12+X.soil)*(1+st),rows=[];
+  [['Topsoil',m[1],dn.topsoil,'topsoil'],['Compost',m[2],dn.compost,'compost'],[m[4]||'Other',m[3],dn[m[5]]||0,'other']].forEach(([n,fr,d,key])=>{if(fr>0)rows.push({n,v:vs*fr,d,bag:bS,soil:1,key})});
+  if(A&&mulD)rows.push({n:'Mulch on beds',v:A*mulD/12,d:dn.mulch,bag:bM,key:'mulch'});
+  if(Ap&&pm==='gravel')rows.push({n:'Gravel for paths',v:Ap*pd/12,d:dn.gravel,tons:1,path:1,key:'gravel'});
+  if(Ap&&pm==='mulch')rows.push({n:'Mulch for paths',v:Ap*pd/12,d:dn.mulch,bag:bM,path:1,key:'mulch'});
+  if(X.flat&&bd)rows.push({n:'Stone base under beds',v:X.flat*bd/12,d:dn.gravel,tons:1,base:1,key:'gravel'});
+  if(X.stone)rows.push({n:'Stone for herb spiral walls',v:X.stone,d:dn.gravel,tons:1,key:'stone'});
+  const qq={};rows.forEach(r=>{qq[r.key]=(qq[r.key]||0)+(r.tons?r.v/27*r.d/2000:r.v/27)});
+  LAST={q:qq,per,fabric:pm==='gravel'?Ap:0,vs,water:A*K.gal*wk,A};
+  let soilLb=0,otherLb=0;
+  const body=rows.map(r=>{const lb=r.v/27*r.d;if(r.soil)soilLb+=lb;else if(!r.path)otherLb+=lb;return `<tr><td>${esc(r.n)}</td><td>${f1(r.v)}</td><td>${(r.v/27).toFixed(2)}</td><td>${r.bag?Math.ceil(r.v/r.bag):'–'}</td><td>${f0(lb)}${r.tons?` (${(lb/2000).toFixed(2)} tons)`:''}</td></tr>`}).join('');
+  const wet=soilLb*K.wet+otherLb,load=A?wet/A:0;
+  $('#mat').innerHTML=`<div class="scroll"><table><thead><tr><th>Material</th><th>Cu ft</th><th>Cu yd</th><th>Bags</th><th>Weight (lb)</th></tr></thead><tbody>${body}</tbody></table></div>
+  <div class="kpi"><span>Soil total <b>${f1(vs)}</b> cu ft (${(vs/27).toFixed(2)} cu yd)</span><span>Water <b>${f0(A*K.gal*wk)}</b> gal a week</span><span>Edging <b>${f0(per)}</b> ft</span><span>Landscape fabric for paths <b>${pm==='gravel'?f0(Ap):0}</b> sq ft</span><span>Load when wet <b>${f0(load)}</b> lb per sq ft</span></div>
+  ${bd>0?'<p class="notice">Extension sources advise against a gravel layer under a raised bed because it can hold water above it (a perched water table). Use a stone base only where drainage is engineered, such as over a patio liner.</p>':''}
+  <p class="sm">Quantities are estimates: round up and confirm bag sizes and bulk density with your supplier. Edging for round beds needs a flexible material such as steel, aluminum, or stone. Yearly top-dress: about ${f1(A*K.topdress/12)} cu ft of compost (${K.topdress} in). Weight shown is moist; the load uses a ${K.wet}x saturated allowance for soil. Rooftops and decks need a structural check.</p>`;
+  cost();
+}
+
+/* ================= variety picker ================= */
+function varInfo(){
+  const pi=+$('#plant').value,box=$('#vinfo');if(pi<0){box.textContent='';return}
+  const p=P[pi],v=VM[pi],list=VAR[p.n]||[];
+  if(!v){box.textContent=list.length?`Using the ${p.n.toLowerCase()} defaults. ${list.length===1?'1 variety is':list.length+' varieties are'} on record: pick one to use its spacing and height.`:`No varieties on record yet for ${p.n.toLowerCase()}, so the species defaults are used.`;return}
+  const rng=v[3]!=null?`${v[3]}${v[4]!=null&&v[4]!==v[3]?'–'+v[4]:''} in (using ${v[2]})`:'not recorded (species default used)';
+  box.innerHTML=`<b>${esc(v[0])}</b> (${esc(v[7]||v[1])}). Spacing: ${rng}. Height: ${v[5]!=null?'about '+v[5]+' in':'not recorded'}. Days to harvest: ${v[6]!=null?v[6]:'not recorded'}. ${v[8]?esc(v[8])+' ':''}Source: ${esc(v[9])}; status: ${esc(v[10])}.`;
+}
+function varList(){
+  const pi=+$('#plant').value,sel=$('#variety'),row=$('#vrow');
+  if(pi<0){row.hidden=true;$('#vinfo').textContent='';return}
+  row.hidden=false;const p=P[pi],list=VAR[p.n]||[],cur=VM[pi],f=($('#vfilter').value||'').toLowerCase();
+  $('#vname').textContent=p.n.toLowerCase();
+  sel.innerHTML=`<option value="">${esc(p.n)} (species default)</option>`+list.map((v,i)=>[v,i]).filter(([v])=>!f||v[0].toLowerCase().includes(f)||v===cur).map(([v,i])=>`<option value="${i}"${v===cur?' selected':''}>${esc(v[0])}${v[7]?` (${esc(v[7])})`:v[1]!=='Cultivar'?` (${esc(v[1])})`:''}</option>`).join('');
+  sel.disabled=!list.length;$('#vfilter').disabled=!list.length;varInfo();
+}
+function setVariety(pi,v){
+  if(v==null)delete VM[pi];else VM[pi]=v;
+  if(OV[pi]){delete OV[pi].sp;delete OV[pi].h;if(!Object.keys(OV[pi]).length)delete OV[pi];LS.set('gbd:ov',ovOut())}
+  if(+$('#plant').value===pi)varList();needsChanged(pi);
+}
+$('#variety').onchange=()=>{const pi=+$('#plant').value,v=$('#variety').value;setVariety(pi,v===''?null:VAR[P[pi].n][+v]);live(v===''?`${P[pi].n} is using the species defaults.`:`${P[pi].n} now uses ${VM[pi][0]}: ${eff(pi).sp} in apart.`)};
+$('#vfilter').oninput=varList;
+
+/* ================= undo / redo ================= */
+const snap=()=>JSON.stringify({c:COLS,r:ROWS,g:G,sh:SH});
+function upd(){$('#undo').disabled=hp<=0;$('#redo').disabled=hp>=hist.length-1}
+function commit(){const s=snap();if(hist[hp]===s)return;hist=hist.slice(0,hp+1);hist.push(s);if(hist.length>80)hist.shift();hp=hist.length-1;upd()}
+function restore(s){const o=JSON.parse(s);COLS=o.c;ROWS=o.r;G=o.g;SH=o.sh||[];if(SEL>=SH.length)SEL=-1;$('#cols').value=COLS;$('#rows').value=ROWS;draw();insp();upd()}
+$('#undo').onclick=()=>{if(hp>0){hp--;restore(hist[hp]);live('Undone')}};
+$('#redo').onclick=()=>{if(hp<hist.length-1){hp++;restore(hist[hp]);live('Redone')}};
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)){e.preventDefault();e.shiftKey?$('#redo').click():$('#undo').click()}});
+
+/* ================= keyboard on the grid ================= */
+gw.addEventListener('focus',()=>{try{if(!gw.matches(':focus-visible'))return}catch(_){}if(!FOC)FOC={x:0,y:0};draw();live(describe(locate(FOC.x+.5,FOC.y+.5)))});
+gw.addEventListener('blur',()=>{FOC=null;draw()});
+gw.addEventListener('keydown',e=>{
+  if(!FOC)FOC={x:0,y:0};const mv={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
+  if(mv&&e.shiftKey&&SEL>=0&&tool()==='select'){const s=SH[SEL];s.cx+=mv[0]*.5;s.cy+=mv[1]*.5;clampShape(s);e.preventDefault();draw();commit();insp();live(`${shName(SEL)} moved. Center at ${s.cx} ft from the left, ${s.cy} ft from the top.`);return}
+  if(mv){FOC.x=Math.max(0,Math.min(COLS-1,FOC.x+mv[0]));FOC.y=Math.max(0,Math.min(ROWS-1,FOC.y+mv[1]));e.preventDefault();draw();live(describe(locate(FOC.x+.5,FOC.y+.5)));return}
+  if((e.key==='Delete'||e.key==='Backspace')&&SEL>=0){e.preventDefault();const nm=shName(SEL);SH.splice(SEL,1);SEL=-1;draw();commit();insp();live(`${nm} removed. Press Ctrl+Z to undo.`);return}
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();const l=locate(FOC.x+.5,FOC.y+.5);
+    if(tool()==='select'){SEL=l&&l.si!=null?l.si:-1;draw();insp();live(SEL>=0?`${shName(SEL)} selected. Shift and arrow keys move it; its settings are in the panel.`:'Nothing to select here.');return}
+    if(l&&l.zi!=null)paintZone(l.si,l.zi);else paint(FOC.x,FOC.y);draw();commit();if(SEL>=0)insp();live('Painted. '+describe(locate(FOC.x+.5,FOC.y+.5)))}
+});
+
+/* ================= templates ================= */
+const TPL=[['4 x 8 bed',4,8,()=>1],['4 x 4 bed',4,4,()=>1],['Two 4 x 8 beds and a path',9,8,(x)=>x===4?2:1],['L-shaped bed',6,6,(x,y)=>x<2||y>=4?1:0],
+  ['Herb spiral',8,8,()=>0,[['spiral',4,4,{r:3}]]],['Keyhole garden',8,8,()=>0,[['keyhole',4,4]]],['Round bed in rings',6,6,()=>0,[['round',3,3,{r:2.5,n:3,lay:'rings'}]]],['Ring bed with a center path',8,8,()=>0,[['ring',4,4,{r:3.5,ri:1,n:4}]]]];
+$('#tpls').innerHTML=TPL.map((t,i)=>`<button type="button" class="chip" data-tpl="${i}">${t[0]}</button>`).join('');
+$('#tpls').addEventListener('click',e=>{const b=e.target.closest('[data-tpl]');if(!b)return;const t=TPL[+b.dataset.tpl];COLS=t[1];ROWS=t[2];$('#cols').value=COLS;$('#rows').value=ROWS;G=Array.from({length:ROWS},(_,y)=>Array.from({length:COLS},(_,x)=>({t:t[3](x,y),p:null,q:[]})));
+  SH=(t[4]||[]).map(([k,cx,cy,o])=>newShape(k,cx,cy,o));SEL=SH.length?0:-1;if(SH.length)setTool('select');draw();commit();insp();live(`${t[0]} ready. Next, choose plants.`)});
+
+/* ================= save / load / share ================= */
+const SET=['share','basis','sea','depth','settle','mix','mulch','pathmat','pathd','base','wk','bagS','bagM'];
+const enc=()=>({v:2,vm:Object.fromEntries(Object.entries(VM).map(([i,v])=>[P[i].n,v[0]])),ov:ovOut(),c:COLS,r:ROWS,g:G.map(r=>r.map(c=>`${c.t}${c.p==null?'':'p'+c.p}${(c.q||[]).map(q=>'q'+q).join('')}`).join(',')).join(';'),
+  sh:SH.map(s=>[s.k,s.cx,s.cy,s.r,s.n,s.lay,s.ri,s.sw,s.hgt,s.rot,s.z.map(z=>[z.p==null?-1:z.p,...z.q])]),s:Object.fromEntries(SET.map(i=>[i,$('#'+i).value]))});
+function dec(o){
+  if(!o||!(o.v===1||o.v===2)||!(o.c>=1&&o.c<=24&&o.r>=1&&o.r<=24))throw new Error('bad');
+  const okP=x=>Number.isInteger(x)&&x>=0&&x<P.length;
+  const g=o.g.split(';').map(r=>r.split(',').map(s=>{const m=s.match(/^([012])(?:p(\d+))?((?:q\d+)*)$/);if(!m)throw new Error('bad');const p=m[2]==null?null:+m[2],q=(m[3].match(/q(\d+)/g)||[]).map(x=>+x.slice(1));if((p!=null&&!okP(p))||q.some(x=>!okP(x))||q.length>2)throw new Error('bad');return{t:+m[1],p,q}}));
+  if(g.length!==o.r||g.some(r=>r.length!==o.c))throw new Error('bad');
+  const sh=(o.sh||[]).slice(0,12).map(a=>{if(!Array.isArray(a)||!KIND[a[0]])throw new Error('bad');const [k,cx,cy,r,n,lay,ri,sw_,hgt,rot,z]=a;if(![cx,cy,r,n].every(Number.isFinite))throw new Error('bad');
+    const s={k,cx,cy,r,n,lay:(KIND[k].lays||[KIND[k].lay]).includes(lay)?lay:KIND[k].lay,ri:+ri||0,sw:+sw_||0,hgt:+hgt||0,rot:[0,90,180,270].includes(rot)?rot:90,z:(Array.isArray(z)?z:[]).slice(0,8).map(zz=>{const p=Array.isArray(zz)?zz[0]:-1,q=Array.isArray(zz)?zz.slice(1,3).filter(okP):[];return{p:okP(p)?p:null,q}})};return s});
+  VM={};Object.entries(o.vm||{}).forEach(([pn,vn])=>{const pi=idx[pn],v=(VAR[pn]||[]).find(x=>x[0]===vn);if(pi!=null&&v)VM[pi]=v});
+  if(o.ov)ovIn(o.ov);
+  COLS=o.c;ROWS=o.r;G=g;SH=sh;SH.forEach(clampShape);SEL=-1;SET.forEach(i=>{if(o.s&&o.s[i]!=null)$('#'+i).value=o.s[i]});$('#cols').value=COLS;$('#rows').value=ROWS;varList();facts();adjFields();insp();
+}
+const toCode=()=>btoa(unescape(encodeURIComponent(JSON.stringify(enc()))));
+const fromCode=s=>dec(JSON.parse(decodeURIComponent(escape(atob(s.trim().replace(/^.*#d=/,''))))));
+const say=m=>{$('#msg').textContent=m};
+function refreshSaved(){const d=LS.get('gbd:designs')||{};$('#saved').innerHTML=Object.keys(d).map(n=>`<option>${esc(n)}</option>`).join('')||'<option value="">No saved designs yet</option>'}
+$('#save').onclick=()=>{const n=$('#dname').value.trim()||'My design',d=LS.get('gbd:designs')||{};d[n]=enc();say(LS.set('gbd:designs',d)?`Saved "${n}" in this browser.`:'This browser blocks saving here. Use the design code instead.');refreshSaved();$('#saved').value=n};
+$('#load').onclick=()=>{const d=LS.get('gbd:designs')||{},n=$('#saved').value;if(!d[n]){say('Pick a saved design to open.');return}try{dec(d[n]);draw();commit();say(`Opened "${n}".`)}catch(e){say('That saved design could not be read.')}};
+$('#del').onclick=()=>{const d=LS.get('gbd:designs')||{},n=$('#saved').value;if(d[n]){delete d[n];LS.set('gbd:designs',d);refreshSaved();say(`Deleted "${n}".`)}};
+$('#export').onclick=()=>{$('#code').value=toCode();$('#code').select();say('Copy this code to keep or share the design.')};
+$('#import').onclick=()=>{try{fromCode($('#code').value);draw();commit();say('Opened the design from the code.')}catch(e){say('That code could not be read. Check that the whole code was pasted.')}};
+$('#link').onclick=()=>{const u=location.href.split('#')[0]+'#d='+toCode();$('#code').value=u;try{navigator.clipboard.writeText(u).then(()=>say('Link copied. Anyone with it can open this design.'),()=>say('Copy the link from the box below.'))}catch(e){say('Copy the link from the box below.')}};
+$('#print').onclick=()=>{try{window.print()}catch(e){say('Printing is not available here.')}};
+$('#gosave').onclick=()=>{selTab('tab-save',true);$('#report').scrollIntoView({block:'start'})};
+
+/* ================= cost ================= */
+let PR=LS.get('gbd:prices')||{};
+function cost(){
+  const L=LAST,q=L.q,rows=[['topsoil','Topsoil',q.topsoil,'cu yd'],['compost','Compost',q.compost,'cu yd'],['other','Other mix part',q.other,'cu yd'],['mulch','Mulch',q.mulch,'cu yd'],['gravel','Gravel or stone',q.gravel,'ton'],['stone','Wall stone',q.stone,'ton'],['edge','Edging or lumber',L.per,'linear ft'],['fabric','Landscape fabric',L.fabric,'sq ft']].filter(r=>r[2]>0);
+  Object.entries(PC).filter(e=>e[1]>0).forEach(([n,c])=>rows.push(['plant:'+n,n+' plants',c,'each']));
+  $('#cost').innerHTML=rows.length?`<div class="scroll"><table><thead><tr><th>Item</th><th>Quantity</th><th>Unit</th><th>Your price ($ per unit)</th><th>Subtotal</th></tr></thead><tbody>${rows.map(r=>`<tr data-qty="${r[2]}"><td>${esc(r[1])}</td><td>${r[3]==='each'||r[3]==='sq ft'||r[3]==='linear ft'?f0(r[2]):r[2].toFixed(2)}</td><td>${r[3]}</td><td><input type="number" min="0" step="0.01" inputmode="decimal" data-k="${esc(r[0])}" value="${PR[r[0]]!=null?PR[r[0]]:''}" aria-label="Price per ${r[3]} for ${esc(r[1])}"></td><td class="sub1">–</td></tr>`).join('')}</tbody><tfoot><tr><th colspan="4">Estimated total</th><th id="ctot">–</th></tr><tr><td colspan="4">Per square foot planted</td><td id="cpsf">–</td></tr></tfoot></table></div><p class="sm" style="margin-top:10px">Quantities aren't rounded up to whole bags or loads. Confirm with your supplier.</p>`:'<p class="mut">Add some beds to see what to price.</p>';
+  sumCost();
+}
+function sumCost(){let tot=0,any=false;$$('#cost tbody tr').forEach(tr=>{const v=tr.querySelector('input').value;if(v!==''){const s=+tr.dataset.qty*+v;tot+=s;any=true;tr.querySelector('.sub1').textContent='$'+s.toFixed(2)}else tr.querySelector('.sub1').textContent='–'});
+  COSTTOT=any?tot:null;const t=$('#ctot');if(t){t.textContent=any?'$'+tot.toFixed(2):'–';const A=LAST.A||0;$('#cpsf').textContent=any&&A?'$'+(tot/A).toFixed(2):'–'}
+  const kc=$('#kcost');if(kc)kc.textContent=COSTTOT==null?'–':'$'+f0(COSTTOT)}
+$('#cost').addEventListener('input',e=>{const k=e.target.dataset.k;if(!k)return;if(e.target.value==='')delete PR[k];else PR[k]=+e.target.value;LS.set('gbd:prices',PR);sumCost()});
+
+/* ================= planting calendar ================= */
+function cal(all){
+  const seen=new Set(),list=all.filter(q=>!seen.has(q.p.n)&&seen.add(q.p.n)),nm=new Date().getMonth();
+  $('#cal').innerHTML=list.length?`<div class="scroll"><table class="cal"><thead><tr><th style="text-align:left">Plant</th>${MON.map((m,i)=>`<th${i===nm?' class="now-m" title="This month"':''}>${m}</th>`).join('')}<th style="text-align:left">Window</th></tr></thead><tbody>${list.map(q=>`<tr><td style="text-align:left"><b>${esc(q.p.n)}</b></td>${MON.map((m,i)=>q.p.w.includes(i+1)?`<td class="on${i===nm?' now-m':''}"><span aria-hidden="true">&#10003;</span><span class="vh">${esc(q.p.n)}: plant in ${m}</span></td>`:'<td></td>').join('')}<td style="text-align:left">${esc(q.p.win)}</td></tr>`).join('')}</tbody></table></div><p class="sm" style="margin-top:10px">Outdoor planting months for NYC and Westchester (estimates). The marked column is this month. With grow lights or a greenhouse you can start any month: try the Light calculator.</p>`:'<p class="mut">Place plants to see their planting months.</p>';
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-light]');if(b){if(DLG.open)DLG.close();lp.value=b.dataset.light;show('2');window.scrollTo(0,0);return}
+  const l=e.target.closest('[data-lib]');if(l){openPlant(+l.dataset.lib);return}
+  const pl=e.target.closest('[data-plan]');if(pl){const i=+pl.dataset.plan;DLG.close();show('1');goStep(2);setPlant(i);window.scrollTo(0,0);return}
+});
+
+/* ================= report tabs ================= */
+const TABS=$$('[role=tab]');
+function selTab(id,focus){TABS.forEach(t=>{const on=t.id===id;t.setAttribute('aria-selected',String(on));t.tabIndex=on?0:-1;$('#'+t.getAttribute('aria-controls')).hidden=!on;if(on&&focus)t.focus()})}
+TABS.forEach((t,i)=>{t.onclick=()=>selTab(t.id);t.onkeydown=e=>{const n={ArrowRight:i+1,ArrowLeft:i-1,Home:0,End:TABS.length-1}[e.key];if(n==null)return;e.preventDefault();selTab(TABS[(n+TABS.length)%TABS.length].id,true)}});
+
+/* ================= photos ================= */
+const WIKI={Pepper:'Bell pepper','Bush bean':'Green bean','Pole bean':'Green bean','Swiss chard':'Chard',Beet:'Beetroot',Strawberry:'Garden strawberry',Cilantro:'Coriander',Mint:'Mentha',Oregano:'Origanum vulgare',Thyme:'Thymus vulgaris',Sage:'Salvia officinalis','French marigold':'Tagetes patula',Calendula:'Calendula officinalis',Nasturtium:'Tropaeolum majus',Sunflower:'Helianthus annuus',Zinnia:'Zinnia elegans',Cosmos:'Cosmos bipinnatus','Sweet alyssum':'Lobularia maritima','Bee balm':'Monarda didyma','Purple coneflower':'Echinacea purpurea','Swamp milkweed':'Asclepias incarnata',Lavender:'Lavandula angustifolia','Anise hyssop':'Agastache foeniculum','Black-eyed Susan':'Rudbeckia hirta',Lantana:'Lantana camara'};
+let PHOTO={},PHST='idle';
+const photo=n=>(IMG.plants&&IMG.plants[n])||PHOTO[n]||null;
+const vphoto=(n,v)=>IMG.varieties&&IMG.varieties[n+'|'+v];
+const strip=h=>{if(!h)return '';try{return new DOMParser().parseFromString(String(h),'text/html').body.textContent.replace(/\s+/g,' ').trim().slice(0,90)}catch(e){return ''}};
+async function loadPhotos(){
+  if(PHST!=='idle')return;PHST='loading';
+  const c=LS.get('gbd:photos:v1');if(c&&c.t&&Date.now()-c.t<2592e6&&c.d&&Object.keys(c.d).length){PHOTO=c.d;PHST='done';photosReady();return}
+  try{
+    const wt=n=>(IMG.wiki&&IMG.wiki[n])||WIKI[n]||n,titles=[...new Set(P.map(p=>wt(p.n)))];
+    const u='https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&redirects=1&prop=pageimages|info&inprop=url&piprop=thumbnail|name&pithumbsize=640&pilimit=50&titles='+encodeURIComponent(titles.join('|'));
+    const j=await (await fetch(u)).json(),q=j.query||{},alias={};
+    (q.normalized||[]).forEach(x=>alias[x.from]=x.to);(q.redirects||[]).forEach(x=>alias[x.from]=x.to);
+    const res=t=>{let x=t,g=0;while(alias[x]&&g++<4)x=alias[x];return x},pages={};(q.pages||[]).forEach(pg=>pages[pg.title]=pg);
+    const out={};P.forEach(p=>{const pg=pages[res(wt(p.n))];if(pg&&pg.thumbnail)out[p.n]={src:pg.thumbnail.source,page:pg.fullurl,file:pg.pageimage}});
+    const files=[...new Set(Object.values(out).map(o=>o.file).filter(Boolean))];
+    if(files.length){try{
+      const u2='https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&prop=imageinfo&iiprop=extmetadata|url&iiextmetadatafilter=Artist|LicenseShortName|LicenseUrl&titles='+encodeURIComponent(files.map(f=>'File:'+f).join('|'));
+      const j2=await (await fetch(u2)).json(),q2=j2.query||{},al={},meta={};
+      (q2.normalized||[]).forEach(x=>al[x.from]=x.to);(q2.pages||[]).forEach(pg=>{if(pg.imageinfo&&pg.imageinfo[0])meta[pg.title]=pg.imageinfo[0]});
+      Object.values(out).forEach(o=>{const t='File:'+o.file,ii=meta[al[t]||t]||meta[t.replace(/_/g,' ')];if(ii){const em=ii.extmetadata||{};o.credit=strip(em.Artist&&em.Artist.value);o.lic=em.LicenseShortName?strip(em.LicenseShortName.value):'';o.licurl=em.LicenseUrl?em.LicenseUrl.value:'';o.desc=ii.descriptionurl||''}});
+    }catch(e){}}
+    PHOTO=out;PHST=Object.keys(out).length?'done':'fail';if(PHST==='done')LS.set('gbd:photos:v1',{t:Date.now(),d:out});
+  }catch(e){PHST='fail'}
+  photosReady();
+}
+function photosReady(){if(!$('#t-3').hidden)renderLib();if(DLG.open&&DLG.dataset.i!=null)openPlant(+DLG.dataset.i,true);facts()}
+function credit(n){const ph=photo(n);if(!ph)return PHST==='loading'?'Loading photo…':PHST==='fail'?'Photo unavailable right now. Photos load from Wikipedia when you\'re online.':'';
+  if(IMG.plants&&IMG.plants[n])return esc(ph.credit||'');
+  const lic=ph.lic?(ph.licurl&&/^https?:/.test(ph.licurl)?`<a href="${esc(ph.licurl)}" target="_blank" rel="noopener">${esc(ph.lic)}</a>`:esc(ph.lic)):'';
+  const src=ph.desc||ph.page;return `Photo: ${esc(ph.credit||'Wikimedia Commons contributor')}${lic?', '+lic:''}${src&&/^https?:/.test(src)?`, <a href="${esc(src)}" target="_blank" rel="noopener">source</a>`:''}`}
+
+/* ================= plant library ================= */
+const LIB={q:'',ty:'all',safe:false,sort:'az'},DLG=$('#pdlg');
+const nVar=n=>(VAR[n]||[]).length,varTxt=n=>{const c=nVar(n);return c?(c===1?'1 variety':c+' varieties'):'No varieties yet'};
+const months=(w,lab)=>`<span class="ms" role="img" aria-label="${w.length?'Plant outdoors in '+w.map(m=>MONL[m-1]).join(', '):'No outdoor planting months recorded'}">${MON.map((m,i)=>`<i class="${w.includes(i+1)?'on':''}"></i>`).join('')}</span>${lab?`<span class="msl" aria-hidden="true">${MON.map(m=>`<span>${m[0]}</span>`).join('')}</span>`:''}`;
+$('#lib-q').addEventListener('input',e=>{LIB.q=e.target.value.trim().toLowerCase();renderLib()});
+$('#lib-safe').addEventListener('change',e=>{LIB.safe=e.target.checked;renderLib()});
+$('#lib-sort').addEventListener('change',e=>{LIB.sort=e.target.value;renderLib()});
+function renderLib(){
+  const q=LIB.q,order=['Vegetable','Fruit','Herb','Flower'];
+  let list=P.map((p,i)=>({p,i,e:eff(i),vm:q?(VAR[p.n]||[]).filter(v=>v[0].toLowerCase().includes(q)):[]})).filter(o=>(LIB.ty==='all'||o.p.ty===LIB.ty)&&(!LIB.safe||o.p.pet==='S')&&(!q||o.p.n.toLowerCase().includes(q)||o.vm.length));
+  const by={az:(a,b)=>a.p.n.localeCompare(b.p.n),type:(a,b)=>order.indexOf(a.p.ty)-order.indexOf(b.p.ty)||a.p.n.localeCompare(b.p.n),sun:(a,b)=>a.e.s-b.e.s||a.p.n.localeCompare(b.p.n),sp:(a,b)=>a.e.sp-b.e.sp||a.p.n.localeCompare(b.p.n),vars:(a,b)=>nVar(b.p.n)-nVar(a.p.n)}[LIB.sort];list.sort(by);
+  const tv=Object.values(VAR).reduce((a,l)=>a+l.length,0);
+  $('#lib-sub').textContent=`${P.length} plants and ${tv} varieties, with growing needs, companions, and planting months. Open a plant to choose a variety for your plan.`;
+  $('#lib-count').textContent=`Showing ${list.length} of ${P.length} plants${q?` for "${LIB.q}"`:''}.`;
+  $('#lib-grid').innerHTML=list.length?list.map(({p,i,e,vm})=>`<li><button type="button" class="pcard" data-lib="${i}" aria-label="${esc(p.n)}, ${esc(p.ty.toLowerCase())}, ${varTxt(p.n)}">${thumb(i,'pimg')}<span class="pbody"><span class="pt"><b>${esc(p.n)}</b>${pill(p)}</span><span class="sm">${esc(p.ty)}, ${varTxt(p.n)}${VM[i]?`, using ${esc(VM[i][0])}`:''}</span>${vm.length&&!p.n.toLowerCase().includes(q)?`<span class="vmatch">Matches ${esc(vm.slice(0,2).map(v=>v[0]).join(', '))}${vm.length>2?` and ${vm.length-2} more`:''}</span>`:''}${months(p.w)}<span class="pmeta"><span>${e.sp} in apart</span><span>${e.s}+ h sun</span><span>${e.h} in tall</span></span></span></button></li>`).join(''):'<li class="sm">No plants match. Clear the search or the filters.</li>';
+}
+function openPlant(i,refresh){
+  const p=P[i],e=eff(i),ph=photo(p.n),cm=CMP[p.n]||[],good=cm.filter(x=>x.s>0).sort((a,b)=>b.s*WT[b.e]-a.s*WT[a.e]),bad=cm.filter(x=>x.s<0),vars=VAR[p.n]||[],a=k=>isAdj(i,k)?' <span class="adj">adjusted</span>':'';
+  const vf=refresh&&$('#pd-vf')?$('#pd-vf').value:'';
+  $('#pd-body').innerHTML=`<div class="pd-top">
+    <figure class="pd-fig">${thumb(i,'pimg')}<figcaption>${credit(p.n)}</figcaption></figure>
+    <div class="pd-info"><p class="sm" style="margin:0">${esc(p.ty)}${e.v?`, using ${esc(e.v)}`:''}</p><h2 id="pd-h">${esc(p.n)}</h2>${pill(p)}
+      <dl class="facts" style="margin-top:14px"><div><dt>Space apart</dt><dd>${e.sp} in${a('sp')||` <span class="sm">(${e.lo}–${e.hi})</span>`}</dd></div><div><dt>Height</dt><dd>${e.h} in${a('h')}</dd></div><div><dt>Sun</dt><dd>${e.s}+ hours${a('s')}</dd></div><div><dt>Soil depth</dt><dd>${e.dm}–${e.di} in${a('dm')}</dd></div><div><dt>Light target</dt><dd>${e.do!=null?e.do+' mol/m²/day':'Not recorded'}${a('do')}</dd></div><div><dt>Square-foot chart</dt><dd>${f1(1/p.sfg>=1?1/p.sfg:p.sfg)} ${1/p.sfg>=1?'sq ft per plant':'plants per sq ft'}</dd></div></dl>
+      <p class="win" style="margin-bottom:6px"><b>Plant outdoors:</b> ${esc(p.win)}</p>${months(p.w,1)}
+      <p class="sm" style="margin-top:12px"><b>Pets:</b> ${esc(p.pn)}</p>
+      <div class="btns" style="margin-top:14px"><button type="button" class="btn" data-plan="${i}">Plan with ${esc(p.n.toLowerCase())}</button><button type="button" class="btn ghost" data-light="${esc(p.n)}">Check light needs</button></div>
+    </div></div>
+    <h3>Good companions <span class="count">${good.length}</span></h3>${good.length?`<ul class="cl">${good.slice(0,12).map(x=>`<li title="${esc(x.m)}">${sw(idx[x.n],1)}${esc(x.n)} <span class="sm">${EVN[x.e].toLowerCase()}</span></li>`).join('')}</ul>`:'<p class="sm">No companion data yet.</p>'}
+    ${bad.length?`<h3>Keep apart</h3><ul class="cl bad">${bad.map(x=>`<li title="${esc(x.m)}">${esc(x.n)} <span class="sm">${REL[x.s].toLowerCase()}</span></li>`).join('')}</ul>`:''}
+    <h3>Varieties <span class="count">${vars.length}</span></h3>
+    ${vars.length?`<label style="max-width:320px;margin-bottom:10px">Find a variety<input type="search" id="pd-vf" value="${esc(vf)}" autocomplete="off" placeholder="Type to filter"></label>
+    <div class="vt"><table><thead><tr><th>Variety</th><th>Type</th><th>Spacing</th><th>Height</th><th>Days</th><th><span class="vh">Use in plan</span></th></tr></thead><tbody id="pd-vt"></tbody></table></div>
+    <p class="sm" style="margin-top:8px">Choosing a variety updates spacing and height everywhere in your plan. Variety data: ${esc([...new Set(vars.map(v=>v[9]))].join('; '))}; marked for verification.</p>`:'<p class="sm">No varieties on record yet. The species defaults are used.</p>'}`;
+  DLG.dataset.i=i;
+  const vt=()=>{const f=($('#pd-vf')||{}).value||'',fl=f.toLowerCase(),cur=VM[i];$('#pd-vt').innerHTML=vars.map((v,vi)=>[v,vi]).filter(([v])=>!fl||v[0].toLowerCase().includes(fl)).map(([v,vi])=>{const on=v===cur,vp=vphoto(p.n,v[0]);return `<tr class="${on?'cur':''}"><td>${vp?`<img class="vth" src="${esc(vp.src)}" alt="" loading="lazy" onerror="this.remove()">`:''}<b>${esc(v[0])}</b>${on?' <span class="inuse">In your plan</span>':''}${v[8]?`<span class="sm">${esc(v[8])}</span>`:''}</td><td>${esc(v[7]||v[1])}</td><td>${v[3]!=null?`${v[3]}${v[4]!=null&&v[4]!==v[3]?'–'+v[4]:''} in`:'–'}</td><td>${v[5]!=null?v[5]+' in':'–'}</td><td>${v[6]!=null?v[6]:'–'}</td><td><button type="button" class="btn ${on?'':'ghost '}small" data-usev="${vi}" aria-pressed="${on}">${on?'Using':'Use'}<span class="vh"> ${esc(v[0])}</span></button></td></tr>`}).join('')||'<tr><td colspan="6" class="sm">No varieties match.</td></tr>'};
+  if(vars.length){vt();$('#pd-vf').oninput=vt;$('#pd-vt').onclick=ev=>{const b=ev.target.closest('[data-usev]');if(!b)return;const v=vars[+b.dataset.usev],on=VM[i]===v;setVariety(i,on?null:v);vt();renderLib();live(on?`${p.n} is back to the species defaults.`:`${p.n} now uses ${v[0]} in your plan.`);const nb=$(`#pd-vt [data-usev="${b.dataset.usev}"]`);if(nb)nb.focus()}}
+  if(!refresh){if(!DLG.open)DLG.showModal();loadPhotos()}
+}
+$('#pd-x').onclick=()=>DLG.close();
+DLG.addEventListener('click',e=>{if(e.target===DLG)DLG.close()});
+DLG.addEventListener('close',()=>{delete DLG.dataset.i;if(!$('#t-3').hidden)renderLib()});
+
+/* ================= controls ================= */
+function size(){COLS=Math.max(1,Math.min(24,+$('#cols').value||8));ROWS=Math.max(1,Math.min(24,+$('#rows').value||6));G=mk(COLS,ROWS);SH.forEach(clampShape);draw();commit();insp()}
+$('#cols').onchange=$('#rows').onchange=size;
+$('#allbed').onclick=()=>{G.forEach((r,y)=>r.forEach((c,x)=>{if(c.t===0&&!covered(x,y))c.t=1}));draw();commit();live('Every empty square is now bed.')};
+$('#clear').onclick=()=>{G=mk(0,0);G=mk(COLS,ROWS);SH=[];SEL=-1;draw();commit();insp();setTool('bed');live('Cleared. Paint where the bed goes or add a round structure.')};
+SET.forEach(i=>$('#'+i).addEventListener('input',()=>{draw();if(SEL>=0&&i!=='share')insp()}));
+const opts=['Vegetable','Fruit','Herb','Flower'].map(t=>`<optgroup label="${t}">${P.map((p,i)=>p.ty===t?`<option value="${i}">${esc(p.n)}</option>`:'').join('')}</optgroup>`).join('');
+$('#comp').innerHTML='<option value="-1">None</option>'+opts;$('#comp').value=idx['Basil']!=null?idx['Basil']:-1;
+$('#plant').innerHTML='<option value="-1">None</option>'+opts;
+$('#mix').innerHTML=K.mix.map((m,i)=>`<option value="${i}">${esc(m[0])}</option>`).join('');
+$('#q-plant').placeholder=`Search ${P.length} plants`;
+
+/* ================= sample garden ================= */
+G=mk(COLS,ROWS);
+for(let y=0;y<ROWS;y++){for(let x=0;x<4;x++)G[y][x].t=1;G[y][4].t=2}
+const put2=(o,key)=>Object.entries(o).forEach(([n,[x,y,w,h]])=>{const pi=idx[n];if(pi==null)return;for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++){if(key==='p')G[j][i].p=pi;else G[j][i].q.push(pi)}});
+put2({Tomato:[0,0,4,2],Lettuce:[0,2,4,2],Carrot:[0,4,4,2]},'p');put2({Basil:[0,0,4,2],'Sweet alyssum':[0,2,4,2],Radish:[0,4,4,2]},'q');
+{const s=newShape('spiral',8,3,{r:2.5});['Rosemary','Thyme','Parsley'].forEach((n,i)=>{if(idx[n]!=null)s.z[i].p=idx[n]});SH.push(s)}
+$('#plant').value=idx['Tomato']!=null?idx['Tomato']:-1;
+ovIn(LS.get('gbd:ov'));
+try{if(location.hash.startsWith('#d='))fromCode(location.hash.slice(3))}catch(e){}
+palette('plant');palette('comp');facts();varList();adjFields();
+refreshSaved();draw();commit();brushStatus();$('#readout').textContent=DEFRO;
+
+/* ================= light calculator ================= */
+const lp=$('#lp');lp.innerHTML=P.map(p=>`<option>${esc(p.n)}</option>`).join('');lp.value='Lettuce';
+function light(){
+  const i=idx[lp.value],p=eff(i),b=effV(i),m=$('#lm').value,tr=m==='in'?0:m==='gh'?+$('#tr').value/100:1,h=+$('#lh').value||16,key=$('#lt').value==='m'?'dl':'do',tg=p[key];
+  $('#tr').disabled=m!=='gh';const tv=$('#ltv');if(document.activeElement!==tv)tv.value=tg!=null?tg:'';tv.placeholder=tg==null?'Not recorded':'';
+  $('#ltv-h').innerHTML=`${isAdj(i,key)?'<span class="adj">adjusted</span> ':''}Default ${b[key]!=null?b[key]:'not recorded'}${p.v?`, using ${esc(p.v)}`:''}`;
+  if(tg==null){$('#out3').innerHTML=`<h2>${esc(p.n)}</h2><p class="mut">No published light target is on record for ${esc(p.n.toLowerCase())} yet. Enter your own target to see how much light it needs.</p>`;return}
+  $('#out3').innerHTML=`<p class="sm" style="margin:0">Daily light target for ${esc(p.n.toLowerCase())}${p.v?` (${esc(p.v)})`:''}</p><p class="target">${tg} <span>mol/m²/day</span></p><p class="mut" style="max-width:70ch">${p.h1?`Typical indoor light period is ${p.h1}–${p.h2} hours. `:''}Natural light uses placeholder monthly sunlight for the NYC area. Supplemental PPFD is the intensity at the canopy your lights must supply while they're on.</p><div class="scroll"><table><thead><tr><th>Month</th><th>Natural light</th><th style="min-width:110px">Share of target</th><th>Still needed</th><th>Supplemental PPFD</th></tr></thead><tbody>${DATA.solar.map((s,mi)=>{const nat=s*7.265*tr,gap=Math.max(0,tg-nat),pct=Math.min(100,nat/tg*100);return `<tr><td>${MON[mi]}</td><td>${nat.toFixed(1)}</td><td><div class="bar" aria-hidden="true"><i${gap?'':' class="met"'} style="width:${pct}%"></i></div><span class="vh">${Math.round(pct)}% of target</span></td><td>${gap.toFixed(1)}</td><td>${gap?Math.round(gap*1e6/(h*3600))+' µmol/m²/s':'None needed'}</td></tr>`}).join('')}</tbody></table></div><p class="sm" style="margin-top:10px">Light values are mol/m²/day.</p>`;
+}
+['lp','lt','lm','tr','lh'].forEach(i=>$('#'+i).addEventListener('input',light));
+$('#ltv').addEventListener('change',e=>{const i=idx[lp.value],key=$('#lt').value==='m'?'dl':'do';setOv(i,key,e.target.value);needsChanged(i,`${P[i].n} light target updated.`);light()});
+
+/* ================= start ================= */
+{const h=location.hash;if(h==='#library')show('3',true);else if(h==='#light')show('2',true)}
+setTimeout(()=>{if(PHST==='idle')loadPhotos()},1200);
+</script>
+</body>
+</html>

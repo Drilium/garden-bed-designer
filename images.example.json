@@ -1,0 +1,12 @@
+{
+  "_readme": "Copy this file to images.json, list your own photos, and rebuild. Paths are relative to index.html (for example img/tomato.jpg) or full https URLs. Plants you don't list keep their Wikipedia photo. 'wiki' changes which Wikipedia article a plant's photo comes from.",
+  "plants": {
+    "Tomato": { "src": "img/tomato.jpg", "credit": "Photo: DeAndre Brown" }
+  },
+  "varieties": {
+    "Tomato|Brandywine": { "src": "img/tomato-brandywine.jpg", "credit": "Photo: DeAndre Brown" }
+  },
+  "wiki": {
+    "Pole bean": "Phaseolus vulgaris"
+  }
+}

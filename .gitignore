@@ -1,0 +1,5 @@
+# Keep the source workbook private: it contains imported third-party datasets.
+data/*.xlsx
+~$*
+.DS_Store
+__pycache__/
