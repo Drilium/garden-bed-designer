@@ -1395,21 +1395,24 @@ function diffs(i,v){
 }
 const VI={space:'<path d="M2 10h16M5 7l-3 3 3 3M15 7l3 3-3 3"/>',height:'<path d="M10 2v16M7 5l3-3 3 3M7 15l3 3 3-3"/>',sun:'<circle cx="10" cy="10" r="3.5"/><path d="M10 1.5v2.5M10 16v2.5M1.5 10H4M16 10h2.5M4 4l1.8 1.8M14.2 14.2L16 16M16 4l-1.8 1.8M5.8 14.2L4 16"/>',days:'<rect x="3" y="4" width="14" height="13" rx="2"/><path d="M3 8h14M7 2v4M13 2v4"/>',look:'<path d="M1.5 10S4.5 4 10 4s8.5 6 8.5 6-3 6-8.5 6S1.5 10 1.5 10z"/><circle cx="10" cy="10" r="2.5"/>',pot:'<path d="M4 7h12l-1.5 10h-9z"/><path d="M10 7V3M10 5c-2-2-4-1-4-1M10 5c2-2 4-1 4-1"/>',same:'<path d="M4 10l4 4 8-8"/>'};
 const vicon=k=>`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${VI[k]}</svg>`;
-const vClean=v=>{let n=v[0].replace(/\s*\((type|species|entry \d+)\)\s*/gi,' ').trim();if(n.includes(',')){const [a,b]=n.split(',');n=b.trim()+' '+a.trim()}return n};
-let VPH=LS.get('gbd:vph:v1')||{};
+const SCI={Tomato:['solanum lycopersicum','lycopersicon','tomato'],Pepper:['capsicum','pepper cultivar','bell pepper','chili pepper'],Cucumber:['cucumis sativus','cucumber'],Zucchini:['cucurbita pepo','zucchini','courgette'],Pumpkin:['cucurbita','pumpkin'],'Bush bean':['phaseolus'],'Pole bean':['phaseolus'],Pea:['pisum sativum','peas'],'Sweet corn':['zea mays','maize','sweet corn'],Lettuce:['lactuca','lettuce'],Kale:['brassica oleracea','kale'],Spinach:['spinacia','spinach'],'Swiss chard':['beta vulgaris','chard'],Carrot:['daucus','carrot'],Radish:['raphanus','radish'],Beet:['beta vulgaris','beetroot'],Broccoli:['brassica oleracea','broccoli'],Onion:['allium cepa','onion'],Garlic:['allium sativum','garlic'],Strawberry:['fragaria','strawberr'],Basil:['ocimum','basil (plant)','basil cultivar','basil plants'],Cilantro:['coriandrum','coriander'],Dill:['anethum'],Parsley:['petroselinum','parsley'],Chives:['allium schoenoprasum','chives'],Mint:['mentha'],Oregano:['origanum'],Thyme:['thymus'],Rosemary:['rosmarinus','salvia rosmarinus'],Sage:['salvia officinalis'],Fennel:['foeniculum'],'French marigold':['tagetes'],Calendula:['calendula'],Nasturtium:['tropaeolum'],Sunflower:['helianthus','sunflower'],Zinnia:['zinnia'],Cosmos:['cosmos bipinnatus','cosmos sulphureus','cosmos (plant)'],'Sweet alyssum':['lobularia'],Borage:['borago'],'Bee balm':['monarda'],'Purple coneflower':['echinacea'],'Swamp milkweed':['asclepias'],Lavender:['lavandula'],'Anise hyssop':['agastache'],'Black-eyed Susan':['rudbeckia'],Lantana:['lantana']};
+const vClean=(v,n)=>{let s=v[0];const q=s.match(/'([^']+)'/);if(q)s=q[1];s=s.replace(/\s*\((type|species|entry \d+)\)\s*/gi,' ').replace(/\bF1\b/gi,'').trim();if(s.includes(',')){const [a,b]=s.split(',');s=b.trim()+' '+a.trim()}
+  const kws=KW[n]||[n.toLowerCase()],ws=s.split(/\s+/),isK=w=>kws.some(k=>w.toLowerCase().startsWith(k.slice(0,4)));while(ws.length>1&&isK(ws[ws.length-1]))ws.pop();while(ws.length>1&&isK(ws[0]))ws.shift();return ws.join(' ')};
+let VPH=LS.get('gbd:vph:v2')||{};
 async function vPhoto(i,v){
   const p=P[i],key=p.n+'|'+v[0],own=vphoto(p.n,v[0]);if(own)return Object.assign({own:1},own);
   const c=VPH[key];if(c&&Date.now()-c.t<2592e6)return c.r;
-  const kws=KW[p.n]||[p.n.toLowerCase()],cult=vClean(v),words=cult.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2&&!kws.some(k=>w.startsWith(k.slice(0,4))));
+  const kws=KW[p.n]||[p.n.toLowerCase()],sci=SCI[p.n]||kws,cult=vClean(v,p.n),words=cult.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2);
+  if(/microgreen/i.test(v[0])||cult.toLowerCase()===p.n.toLowerCase()||!words.length){VPH[key]={t:Date.now(),r:null};LS.set('gbd:vph:v2',VPH);return null}
   const q=`intitle:"${cult.replace(/"/g,'')}" ${kws[0]} filetype:bitmap`;
-  const u='https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&generator=search&gsrnamespace=6&gsrlimit=8&gsrsearch='+encodeURIComponent(q)+'&prop=imageinfo&iiprop=url|extmetadata&iiextmetadatafilter=Artist|LicenseShortName|LicenseUrl&iiurlwidth=720';
+  const u='https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&generator=search&gsrnamespace=6&gsrlimit=8&gsrsearch='+encodeURIComponent(q)+'&prop=imageinfo|categories&clshow=!hidden&cllimit=max&iiprop=url|extmetadata&iiextmetadatafilter=Artist|LicenseShortName|LicenseUrl&iiurlwidth=720';
   let r=null;
   try{const j=await (await fetch(u)).json(),pages=((j.query||{}).pages||[]).sort((a,b)=>a.index-b.index);
-    const ok=pg=>{const t=pg.title.toLowerCase();return words.every(w=>t.includes(w))&&(kws.some(k=>t.includes(k))||cult.toLowerCase().split(' ').some(w=>kws.some(k=>w.startsWith(k.slice(0,4)))))&&!/seed packet|logo|map|house|building|church|street/.test(t)};
+    const ok=pg=>{const t=pg.title.toLowerCase(),cats=(pg.categories||[]).map(c=>c.title.toLowerCase()).join('|');return words.every(w=>t.includes(w))&&sci.some(k=>t.includes(k)||cats.includes(k))&&!/statue|portrait|seed packet|logo|map of|church|street|restaurant|menu|course|frapp|confit|salad|soup|recipe|sandwich|pizza|dish|served/.test(t)};
     const pg=pages.find(ok);
     if(pg&&pg.imageinfo&&pg.imageinfo[0]){const ii=pg.imageinfo[0],em=ii.extmetadata||{};r={src:ii.thumburl||ii.url,credit:strip(em.Artist&&em.Artist.value),lic:em.LicenseShortName?strip(em.LicenseShortName.value):'',licurl:em.LicenseUrl?em.LicenseUrl.value:'',desc:ii.descriptionurl||''}}
   }catch(e){return undefined}
-  VPH[key]={t:Date.now(),r};LS.set('gbd:vph:v1',VPH);return r;
+  VPH[key]={t:Date.now(),r};LS.set('gbd:vph:v2',VPH);return r;
 }
 function vCredit(ph,p,v,state){
   const nm=p.n.toLowerCase();
