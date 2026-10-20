@@ -3,3 +3,4 @@ data/*.xlsx
 ~$*
 .DS_Store
 __pycache__/
+data/wrg_varieties.csv

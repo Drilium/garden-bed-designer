@@ -50,6 +50,18 @@ for r in range(5, 2505):
     varieties.setdefault(ws, []).append([name, g(4), mid(lo, hi), lo, hi, mid(hmin, hmax), g(15), g(21) or "", trim(g(8) or ""), src, g(24)])
 for k in varieties: varieties[k].sort(key=lambda v: v[0].lower())
 
+# cultivar details (sun, water, color, size, shape, flavor...) from the Wind River Greens database, CC BY 4.0
+sys.path.insert(0, str(ROOT / "build"))
+from variety_details import load, attach
+try:
+    n_det = attach(varieties, load(ROOT / "data" / "wrg_varieties.csv"))
+except Exception as e:  # offline or the file moved: build without the extra details
+    print(f"variety details skipped: {e}")
+    n_det = 0
+    for lst in varieties.values():
+        for v in lst:
+            v.append(None)
+
 mech, midx, pairs = [], {}, []
 for r in range(12, 700):
     a = co.cell(row=r, column=1).value
@@ -79,4 +91,4 @@ html = (ROOT / "build" / "app_template.html").read_text(encoding="utf-8")
 html = html.replace("/*DATA*/", json.dumps(data, separators=(",", ":"))).replace("/*CONST*/", json.dumps(const, separators=(",", ":")))
 (ROOT / "index.html").write_text(html, encoding="utf-8")
 print(f"index.html written: {len(plants)} plants, {len(pairs)} pairs, {sum(len(v) for v in varieties.values())} varieties, "
-      f"{len(data['img'].get('plants', {}))} custom plant photos, {len(data['img'].get('varieties', {}))} custom variety photos")
+      f"{n_det} with cultivar details, {len(data['img'].get('plants', {}))} custom plant photos, {len(data['img'].get('varieties', {}))} custom variety photos")

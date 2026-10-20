@@ -10,8 +10,10 @@
   Extension, Illinois Extension, UC Cooperative Extension, Missouri IPM and Ask Extension (gravel layers).
 - **Light targets:** Michigan State University Extension, Purdue Extension, Hort Americas.
 - **Pet safety flags:** drafted from the ASPCA toxic and non-toxic plant lists; confirm at https://www.aspca.org/toxic.
-- **Plant photos:** loaded at runtime from Wikipedia and Wikimedia Commons; each photo shows its author and license
-  (most are CC BY-SA or public domain). Photos listed in `images.json` are the site owner's own.
+- **Variety details:** sun, water, color, size, shape, flavor, descriptions, disease resistance and pests from the Wind River
+  Greens Plant Variety Database (CC BY 4.0), joined by variety name; descriptions shortened.
+- **Plant and variety photos:** loaded at runtime from Wikipedia and Wikimedia Commons (variety photos are matched by name
+  and may not be exact); each photo shows its author and license (most are CC BY-SA or public domain). Photos listed in `images.json` are the site owner's own.
 - **Temperature data in the workbook:** FAO EcoCrop via the Recocrop R package (not used directly by this web app).
 
 The workbook that feeds this app also contains copies of imported datasets. Do not publish it unless you have checked each

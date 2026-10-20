@@ -16,7 +16,8 @@ Draft data: verify before building anything.
   - Keyhole bed: a notch to reach in and a compost basket in the middle
   - Herb spiral: a raised stone spiral, dry at the top and moist at the bottom
 - **Plant library** (`#library`): search plants and varieties, open a plant for its facts, companions and
-  variety table, and choose a variety for your plan.
+  variety table, and open any variety for its photo, what's different from a typical plant (spacing, height, sun,
+  days to harvest, color), a side-by-side comparison, and a button to use it in your plan.
 - **Light calculator** (`#light`): supplemental light by month, using each plant's (or your adjusted) target.
 
 ## Run it on your computer
@@ -50,9 +51,15 @@ The data lives in the Garden AIO workbook (`Garden_AIO_Data.xlsx`), which is **n
 
 Only plants with **Bed designer ready = Y** in the `2_Crops` tab appear in the app.
 
+The build also joins cultivar details (sun, water, color, size, shape, flavor, description, pests) from the
+[Wind River Greens Plant Variety Database](https://github.com/bripatch/plant-variety-database) (CC BY 4.0). It
+downloads `data/varieties.csv` from that repo to `data/wrg_varieties.csv` the first time (git-ignored). Delete that
+file to pick up their monthly updates. If the download fails, the build continues without the extra details.
+
 ## Photos
-By default the app loads one photo per plant from Wikipedia and Wikimedia Commons, with the photographer and
-license shown under it. To use your own photos for a plant or a specific variety:
+By default the app loads one photo per plant from Wikipedia and Wikimedia Commons, and searches Wikimedia Commons
+for a photo of each variety by name when you open it, with the photographer and license shown under each photo.
+Varieties without a match show the species photo. To use your own photos for a plant or a specific variety:
 1. Put the images in `img/`.
 2. Copy `images.example.json` to `images.json` and list them (`"Tomato"` for a plant, `"Tomato|Brandywine"`
    for a variety).
