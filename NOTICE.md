@@ -14,6 +14,10 @@
   Greens Plant Variety Database (CC BY 4.0), joined by variety name; descriptions shortened.
 - **Plant and variety photos:** loaded at runtime from Wikipedia and Wikimedia Commons (variety photos are matched by name
   and may not be exact); each photo shows its author and license (most are CC BY-SA or public domain). Photos listed in `images.json` are the site owner's own.
+- **Variety example photos:** studio photos from the Fruits 360 dataset by Horea Muresan and Mihai Oltean
+  (https://github.com/Horea94/Fruit-Images-Dataset), MIT License, copyright (c) 2017-2020; license copy in
+  `img/fruits360/LICENSE`. One image per fruit type and color, matched to varieties by color and shape, so they show
+  an example of that kind of fruit rather than the exact variety.
 - **Temperature data in the workbook:** FAO EcoCrop via the Recocrop R package (not used directly by this web app).
 
 The workbook that feeds this app also contains copies of imported datasets. Do not publish it unless you have checked each

@@ -59,7 +59,10 @@ file to pick up their monthly updates. If the download fails, the build continue
 ## Photos
 By default the app loads one photo per plant from Wikipedia and Wikimedia Commons, and searches Wikimedia Commons
 for a photo of each variety by name when you open it, with the photographer and license shown under each photo.
-Varieties without a match show the species photo. To use your own photos for a plant or a specific variety:
+Tomato, bell pepper, sweet corn, beet, onion and strawberry varieties also get an example studio photo from the
+[Fruits 360 dataset](https://github.com/Horea94/Fruit-Images-Dataset) (MIT), matched by color and shape (the
+rules are in `fruitKey` in `build/app_template.html`; the images are in `img/fruits360/`). An exact Commons match
+replaces it. Varieties with neither show the species photo. To use your own photos for a plant or a specific variety:
 1. Put the images in `img/`.
 2. Copy `images.example.json` to `images.json` and list them (`"Tomato"` for a plant, `"Tomato|Brandywine"`
    for a variety).

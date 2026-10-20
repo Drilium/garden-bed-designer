@@ -331,6 +331,10 @@ dialog#pdlg::backdrop{background:rgba(10,20,14,.55)}
 table.cmp th:first-child{width:22%}
 table.cmp td.dif{background:var(--mari-soft);font-weight:600}
 .pimg.dim img{opacity:.55;filter:saturate(.6)}
+.pimg.spec{background:#fff}
+.pimg.spec img{inset:auto;left:50%;top:50%;width:min(52%,190px);height:auto;aspect-ratio:1;transform:translate(-50%,-50%);object-fit:contain}
+.vthumb{float:left;width:44px;height:44px;border-radius:8px;margin:0 10px 4px 0;background:#fff;border:1px solid var(--rule);overflow:hidden;display:grid;place-items:center}
+.vthumb img{width:40px;height:40px;object-fit:contain}
 
 /* ---------- light tool ---------- */
 .light{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start;margin-bottom:24px}
@@ -633,7 +637,7 @@ footer p{max-width:100ch}
 <dialog id="pdlg" aria-labelledby="pd-h"><div class="pd"><button type="button" class="icon-btn pd-x" id="pd-x" aria-label="Close"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button><div id="pd-body"></div></div></dialog>
 
 <footer>
-  <p>Saved designs stay in this browser; use the design code or share link to move one elsewhere. Variety data: Wind River Greens Plant Variety Database (CC BY 4.0, plants.windrivergreens.com) plus curated notes. Plant photos: Wikipedia and Wikimedia Commons contributors, credited under each photo. Draft data compiled for this project: verify before building. Pet flags follow the ASPCA lists and must be confirmed at aspca.org. Light targets: MSU, Purdue, Hort Americas. Monthly sunlight values are placeholders until replaced with NASA POWER data.</p>
+  <p>Saved designs stay in this browser; use the design code or share link to move one elsewhere. Variety data: Wind River Greens Plant Variety Database (CC BY 4.0, plants.windrivergreens.com) plus curated notes. Plant photos: Wikipedia and Wikimedia Commons contributors, credited under each photo; variety example photos from the Fruits 360 dataset (Horea Mureșan and Mihai Oltean, MIT License). Draft data compiled for this project: verify before building. Pet flags follow the ASPCA lists and must be confirmed at aspca.org. Light targets: MSU, Purdue, Hort Americas. Monthly sunlight values are placeholders until replaced with NASA POWER data.</p>
   <p>Designed and built by DeAndre Brown.</p>
 </footer>
 </div>
@@ -1367,7 +1371,7 @@ function openPlant(i,refresh){
     <div class="vt"><table><thead><tr><th>Variety</th><th>Type</th><th>Spacing</th><th>Height</th><th>Days</th><th><span class="vh">Use in plan</span></th></tr></thead><tbody id="pd-vt"></tbody></table></div>
     <p class="sm" style="margin-top:8px">Open a variety to see a photo and how it differs. Choosing a variety updates spacing, height, and sun everywhere in your plan. Variety data: ${esc([...new Set(vars.map(v=>v[9]))].join('; '))}; marked for verification.</p>`:'<p class="sm">No varieties on record yet. The species defaults are used.</p>'}`;
   DLG.dataset.i=i;delete DLG.dataset.v;
-  const vt=()=>{const f=($('#pd-vf')||{}).value||'',fl=f.toLowerCase(),cur=VM[i];$('#pd-vt').innerHTML=vars.map((v,vi)=>[v,vi]).filter(([v])=>!fl||v[0].toLowerCase().includes(fl)).map(([v,vi])=>{const on=v===cur,vp=vphoto(p.n,v[0]);return `<tr class="${on?'cur':''}"><td>${vp?`<img class="vth" src="${esc(vp.src)}" alt="" loading="lazy" onerror="this.remove()">`:''}<button type="button" class="vlink" data-vd="${i}:${vi}">${esc(v[0])}</button>${on?' <span class="inuse">In your plan</span>':''}<br>${diffs(i,v).map(d=>`<span class="vb">${d[2]}</span>`).join('')}${v[8]?(t=>`<span class="sm">${esc(t.length>150?t.slice(0,150).replace(/\s+\S*$/,'')+'…':t)}</span>`)((v[11]&&v[11].d)||v[8]):''}</td><td>${esc(v[7]||v[1])}</td><td>${v[3]!=null?`${v[3]}${v[4]!=null&&v[4]!==v[3]?'–'+v[4]:''} in`:'–'}</td><td>${v[5]!=null?v[5]+' in':'–'}</td><td>${v[6]!=null?v[6]:'–'}</td><td><button type="button" class="btn ${on?'':'ghost '}small" data-usev="${vi}" aria-pressed="${on}">${on?'Using':'Use'}<span class="vh"> ${esc(v[0])}</span></button></td></tr>`}).join('')||'<tr><td colspan="6" class="sm">No varieties match.</td></tr>'};
+  const vt=()=>{const f=($('#pd-vf')||{}).value||'',fl=f.toLowerCase(),cur=VM[i];$('#pd-vt').innerHTML=vars.map((v,vi)=>[v,vi]).filter(([v])=>!fl||v[0].toLowerCase().includes(fl)).map(([v,vi])=>{const on=v===cur,vp=vphoto(p.n,v[0]);const fk=vp?null:fruitKey(p.n,v);return `<tr class="${on?'cur':''}"><td>${vp?`<img class="vth" src="${esc(vp.src)}" alt="" loading="lazy" onerror="this.remove()">`:fk?`<span class="vthumb" title="Example of a ${esc(F360[fk])}"><img src="${fruitImg(fk)}" alt="" loading="lazy"></span>`:''}<button type="button" class="vlink" data-vd="${i}:${vi}">${esc(v[0])}</button>${on?' <span class="inuse">In your plan</span>':''}<br>${diffs(i,v).map(d=>`<span class="vb">${d[2]}</span>`).join('')}${v[8]?(t=>`<span class="sm">${esc(t.length>150?t.slice(0,150).replace(/\s+\S*$/,'')+'…':t)}</span>`)((v[11]&&v[11].d)||v[8]):''}</td><td>${esc(v[7]||v[1])}</td><td>${v[3]!=null?`${v[3]}${v[4]!=null&&v[4]!==v[3]?'–'+v[4]:''} in`:'–'}</td><td>${v[5]!=null?v[5]+' in':'–'}</td><td>${v[6]!=null?v[6]:'–'}</td><td><button type="button" class="btn ${on?'':'ghost '}small" data-usev="${vi}" aria-pressed="${on}">${on?'Using':'Use'}<span class="vh"> ${esc(v[0])}</span></button></td></tr>`}).join('')||'<tr><td colspan="6" class="sm">No varieties match.</td></tr>'};
   if(vars.length){vt();$('#pd-vf').oninput=vt;$('#pd-vt').onclick=ev=>{const b=ev.target.closest('[data-usev]');if(!b)return;const v=vars[+b.dataset.usev],on=VM[i]===v;setVariety(i,on?null:v);vt();renderLib();live(on?`${p.n} is back to the species defaults.`:`${p.n} now uses ${v[0]} in your plan.`);const nb=$(`#pd-vt [data-usev="${b.dataset.usev}"]`);if(nb)nb.focus()}}
   if(!refresh){if(!DLG.open)DLG.showModal();loadPhotos()}
 }
@@ -1399,6 +1403,32 @@ const SCI={Tomato:['solanum lycopersicum','lycopersicon','tomato'],Pepper:['caps
 const vClean=(v,n)=>{let s=v[0];const q=s.match(/'([^']+)'/);if(q)s=q[1];s=s.replace(/\s*\((type|species|entry \d+)\)\s*/gi,' ').replace(/\bF1\b/gi,'').trim();if(s.includes(',')){const [a,b]=s.split(',');s=b.trim()+' '+a.trim()}
   const kws=KW[n]||[n.toLowerCase()],ws=s.split(/\s+/),isK=w=>kws.some(k=>w.toLowerCase().startsWith(k.slice(0,4)));while(ws.length>1&&isK(ws[ws.length-1]))ws.pop();while(ws.length>1&&isK(ws[0]))ws.shift();return ws.join(' ')};
 let VPH=LS.get('gbd:vph:v2')||{};
+/* Fruits 360 (Mureșan & Oltean, MIT): one studio photo per fruit type and color, matched to varieties by color and shape */
+const F360={'tomato-ribbed':'ribbed red tomato','tomato-plum':'plum tomato','tomato-round':'round red tomato','tomato-cherry':'red cherry tomato','tomato-heart':'heart-shaped tomato','tomato-dark':'dark purple-brown tomato','tomato-yellow':'yellow-orange tomato','tomato-green':'green tomato','pepper-green':'green bell pepper','pepper-orange':'orange bell pepper','pepper-red':'red bell pepper','pepper-yellow':'yellow bell pepper',corn:'ear of sweet corn',beet:'beet root','onion-red':'red onion','onion-white':'yellow or white onion',strawberry:'strawberry'};
+function fruitKey(n,v){
+  const x=v[11]||{},name=v[0].toLowerCase(),look=((x.shp||'')+' '+(x.sz||'')).toLowerCase(),all=(name+' '+look+' '+(x.d||v[8]||'')).toLowerCase(),c=colorWord(x.col)||colorWord(name);
+  if(/microgreen|sprout/.test(name))return null;
+  if(n==='Tomato'){
+    if(['yellow','gold','orange'].includes(c))return 'tomato-yellow';
+    if(['purple','black','brown','chocolate','burgundy','bronze'].includes(c))return 'tomato-dark';
+    if(c==='green')return 'tomato-green';
+    if(c&&!['red','pink','striped','bicolor'].includes(c))return null;
+    if(/cherry|grape|currant|cocktail/.test(name+' '+look))return 'tomato-cherry';
+    if(/heart/.test(name+' '+look))return 'tomato-heart';
+    if(/paste|plum|roma|marzano|oblong|elongat|pear/.test(name+' '+look))return 'tomato-plum';
+    if(/beefsteak|ribbed|pleated|ruffled|fluted|lobed/.test(all))return 'tomato-ribbed';
+    return 'tomato-round';}
+  if(n==='Pepper'){
+    if(/jalape|habanero|cayenne|chil|hot|ghost|serrano|thai|poblano|anaheim|banana|cubanelle|shishito|padr|scotch|bonnet|pimento|cherry|wax|tabasco|aji|pepperoncini/.test(name))return null;
+    if(!/bell|block|blocky|lobe/.test(name+' '+look+' '+all))return null;
+    return {red:'pepper-red',yellow:'pepper-yellow',gold:'pepper-yellow',orange:'pepper-orange',green:'pepper-green'}[c]||null;}
+  if(n==='Sweet corn')return /microgreen|popcorn|ornamental/.test(name)?null:'corn';
+  if(n==='Beet')return !c||['red','purple','burgundy'].includes(c)?'beet':null;
+  if(n==='Onion'){if(/shallot|scallion|bunching|green onion|spring onion|microgreen/.test(name))return null;if(/copper|bronze/.test((x.col||'').toLowerCase())&&!/purple/.test((x.col||'').toLowerCase()))return 'onion-white';if(['red','purple','burgundy'].includes(c))return 'onion-red';if(!c||['yellow','white','gold','brown','cream','bronze'].includes(c))return 'onion-white';return null}
+  if(n==='Strawberry')return 'strawberry';
+  return null;
+}
+const fruitImg=k=>'img/fruits360/'+k+'.jpg';
 async function vPhoto(i,v){
   const p=P[i],key=p.n+'|'+v[0],own=vphoto(p.n,v[0]);if(own)return Object.assign({own:1},own);
   const c=VPH[key];if(c&&Date.now()-c.t<2592e6)return c.r;
@@ -1421,8 +1451,9 @@ function vCredit(ph,p,v,state){
   if(ph){const lic=ph.lic?(ph.licurl&&/^https?:/.test(ph.licurl)?`<a href="${esc(ph.licurl)}" target="_blank" rel="noopener">${esc(ph.lic)}</a>`:esc(ph.lic)):'';return `Photo: ${esc(ph.credit||'Wikimedia Commons contributor')}${lic?', '+lic:''}${ph.desc&&/^https?:/.test(ph.desc)?`, <a href="${esc(ph.desc)}" target="_blank" rel="noopener">source</a>`:''}. Matched by variety name on Wikimedia Commons.`}
   return state==='offline'?`Couldn't search for a photo right now. Showing a typical ${esc(nm)}.`:`No photo of ${esc(v[0])} found yet, so this is a typical ${esc(nm)}. You can add your own in images.json.`;
 }
+function fruitFig(k,p,v,searching){return `<span class="pimg spec"><img src="${fruitImg(k)}" alt="Example of a ${esc(F360[k])}" decoding="async"></span><figcaption>${searching?`Looking for a photo of ${esc(v[0])} itself… `:''}Example of a ${esc(F360[k])}, matched by color and shape. Not this exact variety. Photo: Fruits 360 dataset, Mureșan and Oltean, MIT License.</figcaption>`}
 function openVariety(i,vi){
-  const p=P[i],v=(VAR[p.n]||[])[vi];if(!v)return;const x=v[11]||{},nm=p.n.toLowerCase(),on=VM[i]===v,st=vStats(p.n),df=diffs(i,v),sp=photo(p.n);
+  const p=P[i],v=(VAR[p.n]||[])[vi];if(!v)return;const x=v[11]||{},nm=p.n.toLowerCase(),on=VM[i]===v,st=vStats(p.n),df=diffs(i,v),sp=photo(p.n),fk=vphoto(p.n,v[0])?null:fruitKey(p.n,v);
   const tags=[v[7],x.ct===1?'Container-friendly':'',x.df?x.df.replace(/^./,c=>c.toUpperCase())+' to grow':'',x.se||''].filter(Boolean);
   const row=(l,a,b,dif)=>a==null||a===''?'':`<tr><th scope="row">${l}</th><td class="${dif?'dif':''}">${esc(a)}</td><td>${b==null||b===''?'–':esc(b)}</td></tr>`;
   const cw=colorWord(x.col);
@@ -1433,7 +1464,7 @@ function openVariety(i,vi){
     row('Water',x.wat||null,'',false),row('Color',x.col||null,st.col?`Mostly ${st.col}`:'',cw&&st.col&&cw!==st.col),row('Size',x.sz||null,'',false),row('Shape or habit',x.shp||null,'',false),row('Flavor',x.fl||null,'',false)].join('');
   $('#pd-body').innerHTML=`<button type="button" class="back" data-back="${i}"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l-6 6 6 6"/></svg>All ${esc(nm)} varieties</button>
     <div class="pd-top">
-      <figure class="pd-fig" id="vfig"><span class="pimg dim" style="--h:${hue(i)}"><span class="ini" aria-hidden="true">${esc(v[0][0])}</span>${sp?`<img src="${esc(sp.src)}" alt="" decoding="async" onerror="this.remove()">`:''}</span><figcaption>${vCredit(null,p,v,'loading')}</figcaption></figure>
+      <figure class="pd-fig" id="vfig">${fk?fruitFig(fk,p,v,true):`<span class="pimg dim" style="--h:${hue(i)}"><span class="ini" aria-hidden="true">${esc(v[0][0])}</span>${sp?`<img src="${esc(sp.src)}" alt="" decoding="async" onerror="this.remove()">`:''}</span><figcaption>${vCredit(null,p,v,'loading')}</figcaption>`}</figure>
       <div class="pd-info"><p class="sm" style="margin:0">${esc(p.n)} variety${x.sci?`, <i>${esc(x.sci)}</i>`:''}</p><h2 id="pd-h" tabindex="-1">${esc(v[0])}</h2>
         ${tags.length?`<div class="tags">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}
         ${x.d||v[8]?`<p class="vdesc">${esc(x.d||v[8])}</p>`:''}
@@ -1450,6 +1481,7 @@ function openVariety(i,vi){
   $('#pd-body [data-usevd]').onclick=()=>{const was=VM[i]===v;setVariety(i,was?null:v);renderLib();openVariety(i,vi);live(was?`${p.n} is back to the species defaults.`:`${p.n} now uses ${v[0]} in your plan.`);const b=$('#pd-body [data-usevd]');if(b)b.focus()};
   vPhoto(i,v).then(ph=>{if(!DLG.open||+DLG.dataset.i!==i||+DLG.dataset.v!==vi)return;const f=$('#vfig');if(!f)return;
     if(ph){f.innerHTML=`<span class="pimg" style="--h:${hue(i)}"><span class="ini" aria-hidden="true">${esc(v[0][0])}</span><img src="${esc(ph.src)}" alt="${esc(v[0])} ${esc(nm)}" decoding="async" onerror="this.remove()"></span><figcaption>${vCredit(ph,p,v)}</figcaption>`}
+    else if(fk){f.innerHTML=fruitFig(fk,p,v,false)}
     else{f.querySelector('.pimg').classList.remove('dim');f.querySelector('figcaption').innerHTML=vCredit(null,p,v,ph===undefined?'offline':'none')}});
 }
 

@@ -1,0 +1,74 @@
+{
+ "dataset": "Fruits 360 (https://github.com/Horea94/Fruit-Images-Dataset)",
+ "license": "MIT, Copyright (c) 2017-2020 Mihai Oltean, Horea Muresan",
+ "images": {
+  "tomato-ribbed": {
+   "class": "Tomato 1",
+   "source": "Training/Tomato 1/0_100.jpg"
+  },
+  "tomato-plum": {
+   "class": "Tomato 2",
+   "source": "Training/Tomato 2/0_100.jpg"
+  },
+  "tomato-round": {
+   "class": "Tomato 4",
+   "source": "Training/Tomato 4/0_100.jpg"
+  },
+  "tomato-cherry": {
+   "class": "Tomato Cherry Red",
+   "source": "Training/Tomato Cherry Red/0_100.jpg"
+  },
+  "tomato-heart": {
+   "class": "Tomato Heart",
+   "source": "Training/Tomato Heart/r2_100_100.jpg"
+  },
+  "tomato-dark": {
+   "class": "Tomato Maroon",
+   "source": "Training/Tomato Maroon/r_70_100.jpg"
+  },
+  "tomato-yellow": {
+   "class": "Tomato Yellow",
+   "source": "Training/Tomato Yellow/r2_100_100.jpg"
+  },
+  "tomato-green": {
+   "class": "Tomato not Ripened",
+   "source": "Training/Tomato not Ripened/25_100.jpg"
+  },
+  "pepper-green": {
+   "class": "Pepper Green",
+   "source": "Training/Pepper Green/0_100.jpg"
+  },
+  "pepper-orange": {
+   "class": "Pepper Orange",
+   "source": "Training/Pepper Orange/r_155_100.jpg"
+  },
+  "pepper-red": {
+   "class": "Pepper Red",
+   "source": "Training/Pepper Red/r2_0_100.jpg"
+  },
+  "pepper-yellow": {
+   "class": "Pepper Yellow",
+   "source": "Training/Pepper Yellow/0_100.jpg"
+  },
+  "corn": {
+   "class": "Corn",
+   "source": "Training/Corn/0_100.jpg"
+  },
+  "beet": {
+   "class": "Beetroot",
+   "source": "Training/Beetroot/r2_3_100.jpg"
+  },
+  "onion-red": {
+   "class": "Onion Red",
+   "source": "Training/Onion Red/r2_0_100.jpg"
+  },
+  "onion-white": {
+   "class": "Onion White",
+   "source": "Training/Onion White/0_100.jpg"
+  },
+  "strawberry": {
+   "class": "Strawberry",
+   "source": "Training/Strawberry/0_100.jpg"
+  }
+ }
+}
