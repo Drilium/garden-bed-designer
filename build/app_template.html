@@ -401,7 +401,7 @@ footer p{max-width:100ch}
         <h2 id="s1h" tabindex="-1">Shape your space</h2>
         <p class="lede">Set the size of your area, paint where square beds and paths go, and add round structures. Each square is one square foot, and north is at the top.</p>
         <div class="fields">
-          <label>Width (ft)<input type="number" id="cols" value="11" min="1" max="24" inputmode="numeric"></label>
+          <label>Width (ft)<input type="number" id="cols" value="8" min="1" max="24" inputmode="numeric"></label>
           <label>Length (ft)<input type="number" id="rows" value="6" min="1" max="24" inputmode="numeric"></label>
         </div>
         <h3 class="sh">Add a round structure</h3>
@@ -416,7 +416,7 @@ footer p{max-width:100ch}
         <div class="chips" id="tpls"></div>
         <h3 class="sh">Square beds</h3>
         <div class="btns"><button class="btn ghost" id="allbed">Fill empty squares with bed</button><button class="btn ghost" id="clear">Clear everything</button></div>
-        <p class="tip">A sample garden is loaded so you can see how the planner works. Paint square beds with the Bed and Path brushes. To move or resize a round structure, use the Select tool: drag the structure, or drag the dot on its edge.</p>
+        <p class="tip">A sample garden is loaded so you can see how the planner works. Paint square beds with the Bed and Path brushes. To move or resize a round structure, use the Select tool: drag the structure, or drag the orange dot on its edge. To remove one, select it and click the × on its edge or Remove in the panel.</p>
         <button class="btn next" data-go="2">Next: choose plants</button>
       </div>
 
@@ -639,7 +639,7 @@ const REL={'2':'Strong benefit','1':'Benefit','0':'Neutral','-1':'Caution','-2':
 const PS={},CMP={};DATA.pairs.forEach(([a,b,s,e,m])=>{PS[a+'|'+b]=PS[b+'|'+a]=[s,DATA.mech[m],e];[[a,b],[b,a]].forEach(([x,y])=>(CMP[x]=CMP[x]||[]).push({n:y,s,e,m:DATA.mech[m]}))});
 const f1=n=>(Math.round(n*10)/10).toLocaleString(),f0=n=>Math.round(n).toLocaleString();
 const LS={get:k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
-let COLS=11,ROWS=6,G=[],SH=[],SM=[],SEL=-1,down=false,last='',PC={},LAST={q:{},per:0,fabric:0,vs:0,water:0},FOC=null,hist=[],hp=-1,STEP=1,CTXSIG=null,COSTTOT=null,HL=null,DRAG=null,GEO={ppf:40,ml:0,mt:0},HOVZ=null;
+let COLS=8,ROWS=6,G=[],SH=[],SM=[],SEL=-1,down=false,last='',PC={},LAST={q:{},per:0,fabric:0,vs:0,water:0},FOC=null,hist=[],hp=-1,STEP=1,CTXSIG=null,COSTTOT=null,HL=null,DRAG=null,GEO={ppf:40,ml:0,mt:0},HOVZ=null;
 let VIEW=Object.assign({labels:true,dots:true,comps:true,rings:false},LS.get('gbd:view')||{});
 const mk=(c,r)=>Array.from({length:r},(_,y)=>Array.from({length:c},(_,x)=>(G[y]&&G[y][x])||{t:0,p:null,q:[]}));
 const HUEMAP={},hue0=i=>(i*114+28)%360,hue=i=>HUEMAP[i]!=null?HUEMAP[i]:hue0(i);
@@ -788,7 +788,9 @@ const gw=$('#grid');
 function ptFt(e){const svg=gw.querySelector('svg');if(!svg)return[0,0];const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(svg.getScreenCTM().inverse());return[(q.x-GEO.ml)/GEO.ppf,(q.y-GEO.mt)/GEO.ppf]}
 const endStroke=()=>{if(down){down=false;commit()}last=''};
 gw.addEventListener('pointerdown',e=>{
-  if(e.button>0)return;const [fx,fy]=ptFt(e),t=tool();e.preventDefault();try{gw.setPointerCapture(e.pointerId)}catch(_){}
+  if(e.button>0)return;const [fx,fy]=ptFt(e),t=tool();e.preventDefault();
+  {const el=document.elementFromPoint(e.clientX,e.clientY),d=el&&el.closest&&el.closest('[data-h="del"]');if(d){removeShape(+d.dataset.s);return}}
+  try{gw.setPointerCapture(e.pointerId)}catch(_){}
   if(t==='select'){const el=document.elementFromPoint(e.clientX,e.clientY),h=el&&el.closest&&el.closest('[data-h]');
     if(h){SEL=+h.dataset.s;DRAG={m:h.dataset.h,si:SEL}}
     else{const l=locate(fx,fy);if(l&&l.si!=null){SEL=l.si;DRAG={m:'m',si:SEL,ox:fx-SH[SEL].cx,oy:fy-SH[SEL].cy}}else SEL=-1}
@@ -924,6 +926,7 @@ function draw(){
   if(SEL>=0&&SH[SEL]){const s=SH[SEL],cx=s.cx*ppf,cy=s.cy*ppf,R=s.r*ppf,a=-Math.PI/4,hx=cx+R*Math.cos(a),hy=cy+R*Math.sin(a),hr=Math.max(7,ppf*.16);
     svg+=`<circle cx="${cx}" cy="${cy}" r="${R+5}" fill="none" style="stroke:var(--mari)" stroke-width="2.5" stroke-dasharray="7 5" pointer-events="none"/>
       <g data-s="${SEL}" data-h="m"><circle cx="${cx}" cy="${cy}" r="${hr}" style="fill:var(--sheet);stroke:var(--ink)" stroke-width="2"/><path d="M${cx-hr*.55} ${cy}h${hr*1.1}M${cx} ${cy-hr*.55}v${hr*1.1}" style="stroke:var(--ink)" stroke-width="1.8"/></g>
+      <g data-s="${SEL}" data-h="del" role="button" aria-label="Remove ${esc(shName(SEL))}"><title>Remove ${esc(shName(SEL))}</title><circle cx="${cx+R*Math.cos(-3*Math.PI/4)}" cy="${cy+R*Math.sin(-3*Math.PI/4)}" r="${hr+6}" fill="transparent"/><circle cx="${cx+R*Math.cos(-3*Math.PI/4)}" cy="${cy+R*Math.sin(-3*Math.PI/4)}" r="${hr*.95}" style="fill:var(--sheet);stroke:var(--ink)" stroke-width="2"/><path d="M${cx+R*Math.cos(-3*Math.PI/4)-hr*.4} ${cy+R*Math.sin(-3*Math.PI/4)-hr*.4}l${hr*.8} ${hr*.8}m0 ${-hr*.8}l${-hr*.8} ${hr*.8}" style="stroke:var(--ink)" stroke-width="2" stroke-linecap="round"/></g>
       <g data-s="${SEL}" data-h="r"><circle cx="${hx}" cy="${hy}" r="${hr+6}" fill="transparent"/><circle cx="${hx}" cy="${hy}" r="${hr*.8}" style="fill:var(--mari);stroke:var(--ink)" stroke-width="2"/></g>
       <g pointer-events="none" font-family="inherit" font-weight="700" font-size="${fs}"><rect x="${hx+hr+4}" y="${hy-fs*1.6}" width="${fs*4.4}" height="${fs*1.5}" rx="4" style="fill:var(--ink)"/><text x="${hx+hr+4+fs*2.2}" y="${hy-fs*.5}" text-anchor="middle" style="fill:var(--paper)">${f1(s.r*2)} ft</text></g>`}
   svg+=`<rect id="ghost" width="${ppf-2}" height="${ppf-2}" rx="3" style="fill:var(--mari);stroke:var(--mari)" fill-opacity=".18" stroke-width="2.5" visibility="hidden" pointer-events="none"/>`;
@@ -998,6 +1001,7 @@ function addShape(k){
   live(`${KIND[k].name} added${grew?`; the grid grew to ${COLS} by ${ROWS} ft to make room`:''}${spot?'':'. There was no free space, so it overlaps other beds'}. Drag it to move it, drag the orange dot to resize it, and set its sections in the panel.`);
 }
 $$('[data-add]').forEach(b=>b.onclick=()=>addShape(b.dataset.add));
+function removeShape(si){if(!SH[si])return;const nm=shName(si);SH.splice(si,1);SEL=-1;draw();commit();insp();live(`${nm} removed. Press Ctrl+Z to undo.`)}
 function shList(){
   const h=$('#shlist');if(!SH.length){h.innerHTML='';return}
   h.innerHTML=`<p class="sm" style="margin:0 0 6px">In your plan:</p><div class="chips">${SH.map((s,si)=>`<button type="button" class="chip" data-sel="${si}" aria-pressed="${SEL===si}">${esc(shName(si))}</button>`).join('')}</div>`;
@@ -1021,13 +1025,13 @@ function insp(){
   const zl=m.zones.map((z,zi)=>{const zz=s.z[zi],np=z.pts?z.pts.length:0;return `<li><div class="zh">${zz.p!=null?sw(zz.p):'<span class="dot0" aria-hidden="true"></span>'}<b>${esc(z.name)}</b><span class="sm">${f1(z.area)} sq ft${zz.p!=null?`, ${plural(np,'plant')}`:''}</span></div>
     <div class="fields"><label>Main plant<select data-zp="${zi}" aria-label="Main plant for ${esc(z.name)}">${plantOpts(zz.p==null?-1:zz.p)}</select></label><label>Companion<select data-zq="${zi}" aria-label="Companion for ${esc(z.name)}">${plantOpts(zz.q.length?zz.q[zz.q.length-1]:-1)}</select></label></div>${HINT[z.name]?`<p class="zhint">${HINT[z.name]}</p>`:''}</li>`}).join('');
   const mat=herb?`About ${f1(m.soil*(1+(+$('#settle').value||0)/100))} cu ft of soil and ${f1(m.stone/27*K.dens.gravel/2000)} tons of stone for the walls.`:s.k==='keyhole'?'The center basket takes kitchen scraps and compost; water it there and nutrients soak outward.':s.k==='ring'?'The center counts as path, so it gets gravel or mulch in the materials list.':`${f1(m.edge)} ft of flexible edging around the outside.`;
-  box.innerHTML=`<div class="insp-head">${kicon(s.k)}<h3>${esc(shName(SEL))}</h3><button type="button" class="icon-btn" id="insp-x" aria-label="Done editing ${esc(shName(SEL))}"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
+  box.innerHTML=`<div class="insp-head">${kicon(s.k)}<h3>${esc(shName(SEL))}</h3><button type="button" class="btn ghost small" id="sh-del">Remove</button><button type="button" class="icon-btn" id="insp-x" aria-label="Done editing ${esc(shName(SEL))}"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button></div>
     <p class="sm" style="margin:0">${f1(m.bed)} sq ft of planting space. ${mat}</p>
     <div class="fields">${f.join('')}</div>
     <h4 class="sh">Sections</h4>
     <p class="sm" style="margin:0">Pick plants here, or choose a plant brush and click a section on the grid.</p>
     <ol class="zl">${zl}</ol>
-    <div class="btns" style="margin-top:12px">${herb?'<button type="button" class="btn ghost small" id="herbmix">Plant the classic herb mix</button>':''}<button type="button" class="btn ghost small" id="sh-clear">Clear plants</button><button type="button" class="btn ghost small" id="sh-del">Remove structure</button></div>`;
+    <div class="btns" style="margin-top:12px">${herb?'<button type="button" class="btn ghost small" id="herbmix">Plant the classic herb mix</button>':''}<button type="button" class="btn ghost small" id="sh-clear">Clear plants</button></div>`;
   box.hidden=false;
   if(fk){const el=box.querySelector(fk);if(el)el.focus()}
 }
@@ -1043,7 +1047,7 @@ $('#insp').addEventListener('change',e=>{
 $('#insp').addEventListener('click',e=>{
   const id=e.target.closest('button')&&e.target.closest('button').id;if(!id)return;const s=SH[SEL];
   if(id==='insp-x'){SEL=-1;draw();insp();gw.focus();return}
-  if(id==='sh-del'){const nm=shName(SEL);SH.splice(SEL,1);SEL=-1;draw();commit();insp();live(`${nm} removed. Press Ctrl+Z to undo.`);return}
+  if(id==='sh-del'){removeShape(SEL);return}
   if(id==='sh-clear'){s.z.forEach(z=>{z.p=null;z.q=[]});draw();commit();insp();return}
   if(id==='herbmix'){(HERBMIX[s.n]||[]).forEach((n,i)=>{if(idx[n]!=null){s.z[i].p=idx[n];s.z[i].q=[]}});draw();commit();insp();live('Planted the classic herb mix, from rosemary at the top to parsley at the bottom.')}
 });
@@ -1070,7 +1074,7 @@ function brushStatus(){
   const t=tool(),pi=+$('#plant').value,qi=+$('#comp').value;gw.dataset.tool=t;
   $('#bl-plant').textContent=pi<0?'Plant':P[pi].n;$('#bs-plant').style.setProperty('--h',pi<0?90:hue(pi));
   $('#bl-comp').textContent=qi<0?'No companion':P[qi].n;$('#bs-comp').style.setProperty('--h',qi<0?0:hue(qi));$('#bs-comp').style.visibility=qi<0?'hidden':'visible';
-  const msg={select:'<b>Select.</b> Click a round structure to edit it, drag to move it, or drag the orange dot to resize it.',bed:'<b>Bed brush.</b> Click or drag over squares to add planting area.',path:'<b>Path brush.</b> Paths get gravel or mulch in the materials list.',erase:'<b>Erase.</b> Clears squares, or the plants in a section of a round structure.',
+  const msg={select:'<b>Select.</b> Click a round structure to edit it, drag to move it, drag the orange dot to resize it, or click the × to remove it.',bed:'<b>Bed brush.</b> Click or drag over squares to add planting area.',path:'<b>Path brush.</b> Paths get gravel or mulch in the materials list.',erase:'<b>Erase.</b> Clears squares, or the plants in a section of a round structure.',
     plant:pi<0?'<b>Bare bed brush.</b> Pick a plant in step 2 to paint it.':`<b>Painting ${esc(P[pi].n)}</b> as a main plant. Drag across squares or click a section of a round structure.`,
     comp:qi<0?'<b>Removing companions</b> from the squares and sections you paint.':`<b>Painting ${esc(P[qi].n)}</b> as a companion. Paint over squares or sections that already have a main plant.`}[t];
   $('#brush-now').innerHTML=msg;
@@ -1207,7 +1211,7 @@ gw.addEventListener('keydown',e=>{
   if(!FOC)FOC={x:0,y:0};const mv={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
   if(mv&&e.shiftKey&&SEL>=0&&tool()==='select'){const s=SH[SEL];s.cx+=mv[0]*.5;s.cy+=mv[1]*.5;clampShape(s);e.preventDefault();draw();commit();insp();live(`${shName(SEL)} moved. Center at ${s.cx} ft from the left, ${s.cy} ft from the top.`);return}
   if(mv){FOC.x=Math.max(0,Math.min(COLS-1,FOC.x+mv[0]));FOC.y=Math.max(0,Math.min(ROWS-1,FOC.y+mv[1]));e.preventDefault();draw();live(describe(locate(FOC.x+.5,FOC.y+.5)));return}
-  if((e.key==='Delete'||e.key==='Backspace')&&SEL>=0){e.preventDefault();const nm=shName(SEL);SH.splice(SEL,1);SEL=-1;draw();commit();insp();live(`${nm} removed. Press Ctrl+Z to undo.`);return}
+  if((e.key==='Delete'||e.key==='Backspace')&&SEL>=0){e.preventDefault();removeShape(SEL);return}
   if(e.key===' '||e.key==='Enter'){e.preventDefault();const l=locate(FOC.x+.5,FOC.y+.5);
     if(tool()==='select'){SEL=l&&l.si!=null?l.si:-1;draw();insp();live(SEL>=0?`${shName(SEL)} selected. Shift and arrow keys move it; its settings are in the panel.`:'Nothing to select here.');return}
     if(l&&l.zi!=null)paintZone(l.si,l.zi);else paint(FOC.x,FOC.y);draw();commit();if(SEL>=0)insp();live('Painted. '+describe(locate(FOC.x+.5,FOC.y+.5)))}
@@ -1369,7 +1373,6 @@ G=mk(COLS,ROWS);
 for(let y=0;y<ROWS;y++){for(let x=0;x<4;x++)G[y][x].t=1;G[y][4].t=2}
 const put2=(o,key)=>Object.entries(o).forEach(([n,[x,y,w,h]])=>{const pi=idx[n];if(pi==null)return;for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++){if(key==='p')G[j][i].p=pi;else G[j][i].q.push(pi)}});
 put2({Tomato:[0,0,4,2],Lettuce:[0,2,4,2],Carrot:[0,4,4,2]},'p');put2({Basil:[0,0,4,2],'Sweet alyssum':[0,2,4,2],Radish:[0,4,4,2]},'q');
-{const s=newShape('spiral',8,3,{r:2.5});['Rosemary','Thyme','Parsley'].forEach((n,i)=>{if(idx[n]!=null)s.z[i].p=idx[n]});SH.push(s)}
 $('#plant').value=idx['Tomato']!=null?idx['Tomato']:-1;
 ovIn(LS.get('gbd:ov'));
 try{if(location.hash.startsWith('#d='))fromCode(location.hash.slice(3))}catch(e){}
